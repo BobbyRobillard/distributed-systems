@@ -43,3 +43,11 @@ defmodule VampireNumbers do
   end
 
 end
+
+[lower, upper] = Enum.map(System.argv, &String.to_integer/1)
+Enum.each(lower..upper, fn number ->
+  case VampireNumbers.ranged_search(number) do
+    [] -> nil
+    fangs -> IO.puts([Integer.to_string(number), " ", Enum.join(fangs, " ")])
+  end
+end)
