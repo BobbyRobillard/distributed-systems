@@ -9,3 +9,6 @@
 *.dump
 
 # 2019.07.07 - RCR
+*.protocols
+*.beam
+*.app
