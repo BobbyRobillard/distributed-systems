@@ -6,13 +6,10 @@ defmodule Proj1.Coordinator do
           new_results = [result | results]
 
           if expected == Enum.count(new_results) do
-            send self(), :exit
+            IO.puts(results |> List.flatten |> Enum.join(" "))
+          else
+            loop(new_results, expected)
           end
-
-          loop(new_results, expected)
-
-      :exit ->
-        IO.puts(results |> List.flatten |> Enum.join(" "))
 
        _ -> loop(results, expected)
     end
