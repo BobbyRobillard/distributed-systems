@@ -1,5 +1,13 @@
 defmodule VampireNumbers do
 
+  def loop do
+    receive do
+      {sender_pid, number} ->
+        send(sender_pid, {:ok, ranged_search(number)})
+       _ -> IO.puts("Good job, ya done f***** up...")
+    end
+  end
+
   def ranged_search(number) do
     digits = Integer.digits(number)
     divisor = trunc(:math.pow(10, length(digits) - 2))
@@ -44,10 +52,20 @@ defmodule VampireNumbers do
 
 end
 
+# [lower, upper] = Enum.map(System.argv, &String.to_integer/1)
+# Enum.each(lower..upper, fn number ->
+#   case VampireNumbers.ranged_search(number) do
+#     [] -> nil
+#     fangs -> IO.puts([Integer.to_string(number), " ", Enum.join(fangs, " ")])
+#   end
+# end)
+#
 [lower, upper] = Enum.map(System.argv, &String.to_integer/1)
 Enum.each(lower..upper, fn number ->
-  case VampireNumbers.ranged_search(number) do
-    [] -> nil
-    fangs -> IO.puts([Integer.to_string(number), " ", Enum.join(fangs, " ")])
-  end
+  pid = spawn(VampireNumbers, :loop, [])
+  send(pid, {self, number})
+  # case VampireNumbers.ranged_search(number) do
+  #   [] -> nil
+  #   fangs -> IO.puts([Integer.to_string(number), " ", Enum.join(fangs, " ")])
+  # end
 end)
