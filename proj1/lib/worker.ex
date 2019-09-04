@@ -3,7 +3,7 @@ defmodule Proj1.Worker do
   def loop do
     receive do
       {sender_pid, number} ->
-        send(sender_pid, {:ok, ranged_search(number)})
+        send(sender_pid, {:ok, [number | ranged_search(number)]})
        _ -> IO.puts("Good job, ya done f***** up...")
     end
   end

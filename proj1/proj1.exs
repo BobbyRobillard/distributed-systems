@@ -1,7 +1,6 @@
 [lower, upper] = Enum.map(System.argv, &String.to_integer/1)
 
-coordinator_pid =
-  spawn(Proj1.Coordinator, :loop, [[], Enum.count(lower..upper)])
+coordinator_pid = spawn(Proj1.Coordinator, :loop, [[], upper - lower])
 
 lower..upper |> Enum.each(fn number ->
   worker_pid = spawn(Proj1.Worker, :loop, [])

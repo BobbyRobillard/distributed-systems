@@ -1,17 +1,22 @@
 defmodule Proj1.Coordinator do
 
-  def loop(results, expected) do
+  def loop(results, remaining) do
     receive do
       {:ok, result} ->
-          new_results = [result | results]
+        results = case result do
+          [_] -> results
+          _ -> [result | results]
+        end
 
-          if expected == Enum.count(new_results) do
-            IO.puts(results |> List.flatten |> Enum.join(" "))
-          else
-            loop(new_results, expected)
-          end
+        if remaining > 1 do
+          loop(results, remaining - 1)
+        else
+          Enum.each(results, fn result ->
+            IO.puts(Enum.join(result, " "))
+          end)
+        end
 
-       _ -> loop(results, expected)
+       _ -> loop(results, remaining)
     end
   end
 
