@@ -1,7 +1,6 @@
 # distributed-systems
 
 ## Features
-There are a couple important features of our software.
 
 - 1) The normal version assumes 3 Cores are provided, as that's what
      we've setup our VM to run with. This version outputs all the vampire numbers and their fangs
