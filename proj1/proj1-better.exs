@@ -14,11 +14,13 @@ Parallel.pmap(num_workers, fn x ->
   Enum.each(
      starting .. ending,
       fn y ->
-        # res =
-          Proj1.Worker.ranged_search(y)
-        # if ! Enum.empty?(res) do
-        #   IO.puts Enum.join([y] ++ res, " ")
-        # end
+        res = Proj1.Worker.ranged_search(y)
+        if ! Enum.empty?(res) do
+          # Only here to keep execution speed the same
+          # This script does not output the vampire numbers to keep the output small
+          # For the execution test.
+          Enum.join([y] ++ res, " ")
+        end
       end
   )
 end)
