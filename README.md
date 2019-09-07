@@ -1,4 +1,4 @@
-# distributed-systems
+# Project 1 Readme
 
 ## Features
 
@@ -16,10 +16,10 @@
      $ cd proj1 <br/>
      $ mix run proj1-better.exs <starting_number> <ending_number> <number_of_cores>
 
-     **Note** proj1-better.exs does find the vampire numbers, however it does
+     **Note:** proj1-better.exs does find the vampire numbers, however it does
      not output them. It does this to not clutter the terminal with output.
 
-     **Note** Included is a bash script "execution-test" which will output the different
+     **Note:** Included is a bash script "execution-test" which will output the different
      timings of running the above mix command with 1 - 10 processes. Run this via:
 
      $ cd proj1 # (Do this if your are not already in the proj1 directory) <br/>
