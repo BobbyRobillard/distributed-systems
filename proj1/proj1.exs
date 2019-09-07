@@ -7,7 +7,8 @@ defmodule Parallel do
   end
 end
 
-[lower, upper, num_workers] = Enum.map(System.argv, &String.to_integer/1)
+[lower, upper] = Enum.map(System.argv, &String.to_integer/1)
+num_workers = 3
 total_size = Enum.count(lower..upper)
 Parallel.pmap(num_workers, fn x ->
   starting = trunc(lower + ((x - 1) / num_workers) * total_size)
@@ -17,10 +18,7 @@ Parallel.pmap(num_workers, fn x ->
       fn y ->
         res = Proj1.Worker.ranged_search(y)
         if ! Enum.empty?(res) do
-          # Only here to keep execution speed the same
-          # This script does not output the vampire numbers to keep the output small
-          # For the execution test.
-          Enum.join([y] ++ res, " ")
+          IO.puts Enum.join([y] ++ res, " ")
         end
       end
   )
