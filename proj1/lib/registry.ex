@@ -26,7 +26,7 @@ defmodule Proj1.Registry do
   end
 
 
-  def solve_range(worker_name, range) do
+  def send(worker_name, range) do
     # If we try to send a message to a process
     # that is not registered, we return a tuple in the format
     # {:bad_name, {process_name, error_message}}.
@@ -37,7 +37,7 @@ defmodule Proj1.Registry do
         {:bad_name, {worker_name, range}}
 
       pid ->
-        send(pid, range)
+        Kernel.send(pid, range)
         pid
     end
   end

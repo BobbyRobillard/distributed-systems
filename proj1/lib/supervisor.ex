@@ -11,6 +11,23 @@ defmodule Proj1.Supervisor do
     Supervisor.start_child(:vampire_supervisor, [name])
   end
 
+  # @TODO: Divide and Conquer
+  def solve_range(range) do
+    Proj1.Supervisor.start_worker("worker1")
+    Proj1.Supervisor.start_worker("worker2")
+    Proj1.Supervisor.start_worker("worker3")
+
+    Proj1.Worker.solve_range("worker1", range)
+    Proj1.Worker.solve_range("worker2", range)
+    Proj1.Worker.solve_range("worker3", range)
+
+    solutions = [
+      Proj1.Worker.get_solutions("worker1"),
+      Proj1.Worker.get_solutions("worker2"),
+      Proj1.Worker.get_solutions("worker3")
+    ]
+  end
+
 
   def init(_) do
     children = [
@@ -19,12 +36,5 @@ defmodule Proj1.Supervisor do
 
     supervise(children, strategy: :simple_one_for_one)
   end
-
-
-  # @impl true
-  # def handle_cast(:print, state) do
-  #   state |> Enum.each(fn result -> result |> Enum.join(" ") |> IO.puts end)
-  #   {:noreply, []}
-  # end
 
 end

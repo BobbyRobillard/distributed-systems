@@ -37,17 +37,14 @@ defmodule Proj1.Worker do
 
 
   # Find all the vampire numbers in a given range
-  def handle_cast({:solve_range, message}, messages) do
-      # res = find_vampire_numbers(range)
-      # new_state = [res | vampire_numbers]
-      # IO.inspect binding()
-      {:noreply, [message | messages]}
+  def handle_cast({:solve_range, range}, vampire_numbers) do
+      {:noreply, [find_vampire_numbers(range) | vampire_numbers]}
    end
 
 
    # Return all the vampire numbers found
-   def handle_call(:get_solutions, _from, messages) do
-     {:reply, messages, messages}
+   def handle_call(:get_solutions, _from, vampire_numbers) do
+     {:reply, vampire_numbers, []}
    end
 
 
