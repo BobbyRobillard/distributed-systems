@@ -1,3 +1,8 @@
+# @TODO: Fix solution output
+# @TODO: Divide and Conquer in supervisor
+# @TODO: Add timing and documentation to readme
+
+
 #################################################################################
 #                Elixir script to get the ball rolling                          #
 #################################################################################

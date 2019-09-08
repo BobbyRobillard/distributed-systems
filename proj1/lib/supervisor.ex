@@ -11,7 +11,7 @@ defmodule Proj1.Supervisor do
     Supervisor.start_child(:vampire_supervisor, [name])
   end
 
-  # @TODO: Divide and Conquer
+
   def solve_range(range) do
     Proj1.Supervisor.start_worker("worker1")
     Proj1.Supervisor.start_worker("worker2")
