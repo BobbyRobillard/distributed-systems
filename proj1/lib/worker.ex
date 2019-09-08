@@ -11,8 +11,8 @@ defmodule Proj1.Worker do
   end
 
 
-  def solve_range(worker_name, range) do
-    GenServer.cast(via_tuple(worker_name), {:solve_range, range})
+  def solve_range(worker_name, lower, upper) do
+    GenServer.cast(via_tuple(worker_name), {:solve_range, lower, upper})
   end
 
 
@@ -37,8 +37,8 @@ defmodule Proj1.Worker do
 
 
   # Find all the vampire numbers in a given range
-  def handle_cast({:solve_range, range}, vampire_numbers) do
-      {:noreply, [find_vampire_numbers(range) | vampire_numbers]}
+  def handle_cast({:solve_range, lower, upper}, vampire_numbers) do
+      {:noreply, find_vampire_numbers(lower, upper)}
    end
 
 
@@ -53,18 +53,13 @@ defmodule Proj1.Worker do
   #############################################################################
 
 
-  def find_vampire_numbers(range) do
-    range
-    |> Enum.reduce(
-      fn current_number, vampire_numbers ->
-        res = ranged_search(current_number)
-        if ! Enum.empty?(res) do
-          [[current_number | res] | vampire_numbers] # Number is a vampire number
-        else
-          vampire_numbers
-        end
+  def find_vampire_numbers(lower, upper) do
+    Enum.reduce(upper..lower, [], fn number, result ->
+      case ranged_search(number) do
+        [] -> result
+        fangs -> [[number | fangs] | result]
       end
-    )
+    end)
   end
 
   def ranged_search(number) do

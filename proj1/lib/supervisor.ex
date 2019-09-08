@@ -12,14 +12,15 @@ defmodule Proj1.Supervisor do
   end
 
 
-  def solve_range(range) do
+  def solve_range(lower, upper) do
     Proj1.Supervisor.start_worker("worker1")
     Proj1.Supervisor.start_worker("worker2")
     Proj1.Supervisor.start_worker("worker3")
 
-    Proj1.Worker.solve_range("worker1", range)
-    Proj1.Worker.solve_range("worker2", range)
-    Proj1.Worker.solve_range("worker3", range)
+    third = div(upper - lower, 3);
+    Proj1.Worker.solve_range("worker1", lower, lower + third)
+    Proj1.Worker.solve_range("worker2", lower + third + 1, upper - third)
+    Proj1.Worker.solve_range("worker3", upper - third + 1, upper)
 
     solutions = [
       Proj1.Worker.get_solutions("worker1"),
@@ -27,7 +28,6 @@ defmodule Proj1.Supervisor do
       Proj1.Worker.get_solutions("worker3")
     ]
   end
-
 
   def init(_) do
     children = [

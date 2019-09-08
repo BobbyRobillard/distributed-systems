@@ -13,15 +13,8 @@ Proj1.Registry.start_link
 
 Proj1.Supervisor.start_link
 
-solutions = Proj1.Supervisor.solve_range(lower..upper)
-
-IO.inspect binding()
-
-# # @TODO: Fix solution output
-# solutions
-# |> Enum.each(
-#   fn solution ->
-#     IO.inspect binding()
-#     # IO.puts Enum.join(solution, " ")
-#   end
-# )
+Enum.each(Proj1.Supervisor.solve_range(lower, upper), fn results ->
+  Enum.each(results, fn result ->
+    IO.puts(Enum.join(result, " "))
+  end)
+end)
