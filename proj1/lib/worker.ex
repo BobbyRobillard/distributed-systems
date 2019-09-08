@@ -1,11 +1,73 @@
 defmodule Proj1.Worker do
+  use GenServer
 
-  def loop do
-    receive do
-      {sender_pid, number} ->
-        send(sender_pid, {:ok, [number | ranged_search(number)]})
-       _ -> IO.puts("Good job, ya done f***** up...")
-    end
+  #############################################################################
+  #                                   API                                     #
+  #############################################################################
+
+
+  def start_link(name) do
+    GenServer.start_link(__MODULE__, [], name: via_tuple(name))
+  end
+
+
+  def solve_range(worker_name, range) do
+    GenServer.cast(via_tuple(worker_name), {:solve_range, range})
+  end
+
+
+  def get_solutions(worker_name) do
+    GenServer.call(via_tuple(worker_name), :get_solutions)
+  end
+
+
+  defp via_tuple(worker_name) do
+    {:via, Proj1.Registry, {:vampire_worker, worker_name}}
+  end
+
+
+  #############################################################################
+  #                                   SERVER                                     #
+  #############################################################################
+
+
+  def init(messages) do
+    {:ok, messages}
+  end
+
+
+  # Find all the vampire numbers in a given range
+  def handle_cast({:solve_range, message}, messages) do
+      # res = find_vampire_numbers(range)
+      # new_state = [res | vampire_numbers]
+      # IO.inspect binding()
+      {:noreply, [message | messages]}
+   end
+
+
+   # Return all the vampire numbers found
+   def handle_call(:get_solutions, _from, messages) do
+     {:reply, messages, messages}
+   end
+
+
+  #############################################################################
+  #                              Helper Functions                             #
+  #############################################################################
+
+
+  def find_vampire_numbers(range) do
+    range
+    |> Enum.reduce(
+      fn current_number, vampire_numbers ->
+        res = ranged_search(current_number)
+        if ! Enum.empty?(res) do
+          [[current_number | res] | vampire_numbers] # Number is a vampire number
+        else
+          vampire_numbers
+        end
+      end
+    )
   end
 
   def ranged_search(number) do
