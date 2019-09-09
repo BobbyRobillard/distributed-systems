@@ -22,7 +22,7 @@ defmodule Proj1.Supervisor do
     Proj1.Worker.solve_range("worker2", lower + third + 1, upper - third)
     Proj1.Worker.solve_range("worker3", upper - third + 1, upper)
 
-    solutions = [
+    _solutions = [
       Proj1.Worker.get_solutions("worker1"),
       Proj1.Worker.get_solutions("worker2"),
       Proj1.Worker.get_solutions("worker3")

@@ -17,7 +17,7 @@ defmodule Proj1.Worker do
 
 
   def get_solutions(worker_name) do
-    GenServer.call(via_tuple(worker_name), :get_solutions)
+    GenServer.call(via_tuple(worker_name), :get_solutions, :infinity)
   end
 
 
@@ -37,7 +37,7 @@ defmodule Proj1.Worker do
 
 
   # Find all the vampire numbers in a given range
-  def handle_cast({:solve_range, lower, upper}, vampire_numbers) do
+  def handle_cast({:solve_range, lower, upper}, _vampire_numbers) do
       {:noreply, find_vampire_numbers(lower, upper)}
    end
 
