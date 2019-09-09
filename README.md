@@ -78,17 +78,17 @@
 
 5) The time run was obtained via "$ time mix run proj1.exs 100000 200000" and is:
 
-real    0m0.733s
-user    0m0.983s
-sys     0m0.168s
+- real    0m0.733s
+- user    0m0.983s
+- sys     0m0.168s
 
 *Note:* Our vampire solving algorithm is very fast, to make real use of parallelism it's
 best to run it with larger numbers. For instance, running "$ time mix run proj1.exs 1000 10000000" yields
 the following:
 
-real    0m20.314s
-user    0m46.339s
-sys     0m0.418s
+- real    0m20.314s
+- user    0m46.339s
+- sys     0m0.418s
 
 6) We solved up to 50,000,000. But could have solved much higher, we just didn't feel like wasting time playing
 the waiting game.
