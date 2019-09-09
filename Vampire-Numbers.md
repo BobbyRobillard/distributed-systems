@@ -7,9 +7,6 @@ Project 1: https://ufl.instructure.com/courses/379812/assignments/3984683
 Restricts the search values for x and y such that the range of products includes
 the target value. Described by https://stackoverflow.com/a/36609331/11667368.
 
-Can easily be converted to a distributed parallel algorithm by creating separate
-actors to check intermediate combinations of x and y within the loops.
-
 ```java
 public class VampireNumbers {
 

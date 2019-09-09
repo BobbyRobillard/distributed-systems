@@ -1,5 +1,7 @@
 # Project 1 Readme
 
+**NOTE:** Please also see "Vampire-Numbers.md" for an explanation of how our vampire number finder works.
+
 1) **Group Members**
  - Robert C. Robillard: 4987-1906
  - William B. Anderson: 0420-0420
