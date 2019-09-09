@@ -4,7 +4,7 @@
 
 1) **Group Members**
  - Robert C. Robillard: 4987-1906
- - William B. Anderson: 0420-0420
+ - William B. Anderson: 6695-8353
  - To run our code $cd into the proj1 folder and run $ mix run proj1.exs <starting_number> <ending_number>
 
 2) We used 3 worker actors, as that was all the cores I could afford to give my VM.
