@@ -1,6 +1,6 @@
 # Project 1 Readme
 
-1) *Group Members*
+1) **Group Members**
  - Robert C. Robillard: 4987-1906
  - William B. Anderson: 0420-0420
  - To run our code $cd into the proj1 folder and run $ mix run proj1.exs <starting_number> <ending_number>
@@ -8,12 +8,12 @@
 2) We used 3 worker actors, as that was all the cores I could afford to give my VM.
 
 3) We give each worker a near equal portion of tasks. So for 3 workers each receives 1/3 of the work.
-   *Note:* I say "near equal" because sometimes the range isn't exactly divisible by 3 and the last worker
+   **Note:** I say "near equal" because sometimes the range isn't exactly divisible by 3 and the last worker
    gets to slack off and do slightly less. We determined this by using Dobra's recommendation of "$ perf top"
    to check when more time was being spent in the Kernel (message passing). We deemed that having each worker
    complete all it's work then respond was the best approach given the timeframe to complete to project.
 
-   *Note:* Had we had more time we would have taken a slightly different approach, and had each worker complete
+   **Note:** Had we had more time we would have taken a slightly different approach, and had each worker complete
    a smaller subset of work and report when finished, then take another subset. Thus making sure no worker was ever idle.
    But, unfortunately other classes and commitments are a thing, and the time it would take to create that solutions couldn't be spent currently.
 
@@ -82,7 +82,7 @@
 - user    0m0.983s
 - sys     0m0.168s
 
-*Note:* Our vampire solving algorithm is very fast, to make real use of parallelism it's
+**Note:** Our vampire solving algorithm is very fast, to make real use of parallelism it's
 best to run it with larger numbers. For instance, running "$ time mix run proj1.exs 1000 10000000" yields
 the following:
 
