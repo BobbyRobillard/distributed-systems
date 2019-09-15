@@ -1,7 +1,7 @@
-defmodule CubicTopology do
-  @behaviour NetworkTopology
+defmodule Proj2.Topology.CubicTopology do
+  @behaviour Proj2.Topology.NetworkTopology
 
-  @impl NetworkTopology
+  @impl Proj2.Topology.NetworkTopology
   def get_neighbors(nodes) do
     side = ceil(:math.pow(nodes, 1/3))
     points = Enum.map(1..nodes, fn id ->
