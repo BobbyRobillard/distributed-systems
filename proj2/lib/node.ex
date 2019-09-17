@@ -11,12 +11,13 @@ defmodule Proj2.Node do
   end
 
 
-  def update_state(node_name, message) do
-    GenServer.cast(via_tuple(node_name), {:update_state, message})
+  def gossip_update(node_name) do
+    GenServer.cast(via_tuple(node_name), {:gossip_update, node_name})
   end
 
-  def send_message(node_name, receiver_node_name) do
-    GenServer.cast(via_tuple(node_name), {:send_message, receiver_node_name})
+
+  def push_sum_update(node_name, message) do
+    GenServer.cast(via_tuple(node_name), {:push_sum_update, message})
   end
 
 
@@ -41,39 +42,46 @@ defmodule Proj2.Node do
   end
 
 
-  # Update an actor's state
-  def handle_cast({:send_message, receiver_node_name}, state) do
-      half_s = trunc(Map.get(state, :s)/2)
-      half_w = trunc(Map.get(state, :w)/2)
+  def handle_cast({:gossip_update, node_name}, state) do
+    if ! Map.get(state, :terminated) do
 
-      # Update state of other node
-      Proj2.Node.update_state(
-        receiver_node_name,
-        %{
-          s: half_s,
-          w: half_w,
-        }
-      )
+      new_count = Map.get(state, :count) + 1
 
-      {
-          :noreply,
-          state # Update our own state
-          |> Map.replace!(:s, half_s)
-          |> Map.replace!(:w, half_w)
-      }
-   end
+      case new_count do
+        10 -> {:noreply, Map.put(state, :terminated, true)} # Terminate
 
-  # Update an actor's state
-  def handle_cast({:update_state, message}, state) do
-      {
-          :noreply,
-          %{
-            # our "s" + other actor's "s"
-            s: (Map.get(state, :s) + Map.get(message, :s)),
-            # our "w" + other actor's "w"
-            w: (Map.get(state, :w) + Map.get(message, :w)),
-          }
-      }
+        _ -> (get_random_neighbor(node_name) |> Proj2.Node.gossip_update # Gossip to random neighbor
+             {:noreply, Map.put(state, :count, new_count)}) # Increment our count
+      end
+
+    else
+      {:noreply, new_state}) # Already terminated, do nothing.
+    end
+
+  end
+
+
+  def handle_cast({:push_sum_update, message}, state) do
+    if ! Map.get(state, :terminated) do # Check for terminated node
+      # 1) Add sum to our sum
+      # 2) Check if time to terminate
+      #    - a) If it is then terminated
+      #    - b) Otherwise send message to random neighbor
+
+      # {
+      #     :noreply,
+      #     %{
+      #       # our "s" + other messages's "s"
+      #       s: (Map.get(state, :s) + Map.get(message, :s)),
+      #       # our "w" + other messages's "w"
+      #       w: (Map.get(state, :w) + Map.get(message, :w)),
+      #     }
+      # }
+
+    else
+      {:noreply, new_state}) # Already terminated, do nothing.
+    end
+
    end
 
 
@@ -87,4 +95,13 @@ defmodule Proj2.Node do
   #                              Helper Functions                             #
   #############################################################################
 
+  def get_random_neighbor do
+    "node2"
+  end
+
+  def get_neighbors do
+    [1,2,3]
+  end
+
+  
 end
