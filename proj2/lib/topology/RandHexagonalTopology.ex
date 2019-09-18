@@ -1,9 +1,9 @@
-defmodule Proj2.Topology.RandHexagonalTopology do
-  @behaviour Proj2.Topology.NetworkTopology
+defmodule RandHexagonalTopology do
+  @behaviour NetworkTopology
 
-  @impl Proj2.Topology.NetworkTopology
+  @impl NetworkTopology
   def get_neighbors(nodes) do
-    Enum.map(Proj2.Topology.HexagonalTopology.get_neighbors(nodes), fn neighbors ->
+    Enum.map(HexagonalTopology.get_neighbors(nodes), fn neighbors ->
       id = :rand.uniform(nodes)
       if Enum.member?(neighbors, id) do neighbors else Enum.sort([id | neighbors]) end
     end)

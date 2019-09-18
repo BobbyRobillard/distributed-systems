@@ -1,7 +1,7 @@
-defmodule Proj2.Topology.RandPlanarTopology do
-  @behaviour Proj2.Topology.NetworkTopology
+defmodule RandPlanarTopology do
+  @behaviour NetworkTopology
 
-  @impl Proj2.Topology.NetworkTopology
+  @impl NetworkTopology
   def get_neighbors(nodes) do
     points = Enum.map(1..nodes, fn id ->
       {id, :random.uniform() * 2 - 1, :random.uniform() * 2 - 1}
