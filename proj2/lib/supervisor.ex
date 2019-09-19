@@ -13,8 +13,9 @@ defmodule Proj2.Supervisor do
 
 
   def setup_nodes(_topology) do
-    Proj2.Supervisor.start_node("node")
-    Proj2.Supervisor.start_node("node2")
+    Proj2.Supervisor.start_node(1)
+    Proj2.Supervisor.start_node(2)
+    Proj2.Supervisor.start_node(3)
   end
 
   def init(_) do

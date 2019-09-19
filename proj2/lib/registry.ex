@@ -11,25 +11,25 @@ defmodule Proj2.Registry do
   end
 
 
-  def whereis_name(node_name) do
-    GenServer.call(:registry, {:whereis_name, node_name})
+  def whereis_name(node_number) do
+    GenServer.call(:registry, {:whereis_name, node_number})
   end
 
 
-  def register_name(node_name, pid) do
-    GenServer.call(:registry, {:register_name, node_name, pid})
+  def register_name(node_number, pid) do
+    GenServer.call(:registry, {:register_name, node_number, pid})
   end
 
 
-  def unregister_name(node_name) do
-    GenServer.cast(:registry, {:unregister_name, node_name})
+  def unregister_name(node_number) do
+    GenServer.cast(:registry, {:unregister_name, node_number})
   end
 
 
-  def send(node_name, message) do
-    case whereis_name(node_name) do
+  def send(node_number, message) do
+    case whereis_name(node_number) do
       :undefined ->
-        {:bad_name, {node_name, message}}
+        {:bad_name, {node_number, message}}
 
       pid ->
         Kernel.send(pid, message)
@@ -50,18 +50,18 @@ defmodule Proj2.Registry do
   end
 
 
-  def handle_call({:whereis_name, node_name}, _from, state) do
-    {:reply, Map.get(state, node_name, :undefined), state}
+  def handle_call({:whereis_name, node_number}, _from, state) do
+    {:reply, Map.get(state, node_number, :undefined), state}
   end
 
 
-  def handle_call({:register_name, node_name, pid}, _from, state) do
+  def handle_call({:register_name, node_number, pid}, _from, state) do
     # Registering a name is just a matter of putting it in our Map.
     # Our response tuple include a `:no` or `:yes` indicating if
     # the process was included or if it was already present.
-    case Map.get(state, node_name) do
+    case Map.get(state, node_number) do
       nil ->
-        {:reply, :yes, Map.put(state, node_name, pid)}
+        {:reply, :yes, Map.put(state, node_number, pid)}
       _ ->
         {:reply, :no, state}
     end
@@ -83,8 +83,8 @@ defmodule Proj2.Registry do
   end
 
 
-  def handle_cast({:unregister_name, node_name}, state) do
-    {:noreply, Map.delete(state, node_name)}
+  def handle_cast({:unregister_name, node_number}, state) do
+    {:noreply, Map.delete(state, node_number)}
   end
 
 
