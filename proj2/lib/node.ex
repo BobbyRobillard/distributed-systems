@@ -6,8 +6,8 @@ defmodule Node do
   #############################################################################
 
 
-  def start_link(name) do
-    GenServer.start_link(__MODULE__, [], name: via_tuple(name))
+  def start_link(node_id, neighbors, algorithm) do
+    GenServer.start_link(__MODULE__, [], name: via_tuple(node_id))
   end
 
 
@@ -31,9 +31,8 @@ defmodule Node do
   #############################################################################
 
 
-  def init(_node_id) do
-    # Initialize our s & w
-    {:ok, %{}}
+  def init(node_id, neighbors, algorithm) do
+    {:ok, NetworkAlgorithm.init(node_id, neighbors, algorithm)}
   end
 
 
