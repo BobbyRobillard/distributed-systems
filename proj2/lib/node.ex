@@ -34,8 +34,8 @@ defmodule Node do
   #############################################################################
 
 
-  def init(_stuff) do
-    {:ok, []}
+  def init(state) do
+    {:ok, state}
   end
 
 
