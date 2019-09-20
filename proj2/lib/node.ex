@@ -1,4 +1,4 @@
-defmodule Proj2.Node do
+defmodule Node do
   use GenServer
 
   #############################################################################
@@ -31,7 +31,7 @@ defmodule Proj2.Node do
   #############################################################################
 
 
-  def init(_state) do
+  def init(_node_id) do
     # Initialize our s & w
     {:ok, %{}}
   end

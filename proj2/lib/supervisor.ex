@@ -7,19 +7,26 @@ defmodule Proj2.Supervisor do
   end
 
 
-  def start_node(name) do
-    Supervisor.start_child(:node_supervisor, [name])
+  def start_node(node_id, neighbors, algorithm) do
+    Supervisor.start_child(:node_supervisor, [node_id, neighbors]) # Start new node
+    Node.update_state(# Setup initial state of node that was just created
+      node_id,
+      NetworkAlgorithm.init(node_id, neighbors, algorithm)
+    )
   end
 
 
-  def setup_nodes(nodes, topology) do
+  def setup_nodes(nodes, topology, algorithm) do
     neighbors = NetworkTopology.get_neighbors(nodes, topology)
-    nodes = Enum.reduce(1..nodes, [], fn x, acc ->
-      [Proj2.Supervisor.start_node(x)] ++ acc
+    nodes = Enum.reduce(1..nodes, [], fn node_id, acc ->
+        acc ++ [
+          Proj2.Supervisor.start_node(
+            node_id,
+            Enum.at(neighbors, node_id - 1), # Set neighbors of each node
+            algorithm
+          )
+        ]
     end)
-    IO.inspect binding()
-    # Set neighbors of each node
-
   end
 
   def init(_) do
