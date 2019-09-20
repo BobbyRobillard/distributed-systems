@@ -38,8 +38,7 @@ defmodule Node do
 
 
   def handle_cast({:update_state, new_state}, state) do
-      # Algorithm.NetworkAlgorithm(new_state)
-      {:noreply, state}
+      {:noreply, new_state}
   end
 
 
