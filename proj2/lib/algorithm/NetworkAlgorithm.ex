@@ -1,26 +1,12 @@
 defmodule NetworkAlgorithm do
 
-  @callback init(id) :: state when id: integer(), state: tuple()
+  def of("gossip"), do: GossipAlgorithm
+  def of("push-sum"), do: PushSumAlgorithm
 
-  def init(id, neighbors, algorithm) do
-    state = case algorithm do
-      "gossip" -> GossipAlgorithm.init(id)
-      "push-sum" -> PushSumAlgorithm.init(id)
-    end
-    {state, neighbors, algorithm}
-  end
+  @callback init_state(id :: integer()) :: any()
 
-  @callback process(message, state) :: {:continue, message, state} | {:terminate, state} when message: any(), state: tuple()
+  @callback init_message(message :: string()) :: any()
 
-  def process(message, {state, neighbors, algorithm}) do
-    state = case algorithm do
-      "gossip" -> GossipAlgorithm.process(message, state)
-      "push-sum" -> PushSumAlgorithm.process(message, state)
-    end
-    case state do
-      {:continue, message, state} -> {:continue, message, {state, neighbors, algorithm}}
-      {:terminate, state} -> {:terminate, {state, neighbors, algorithm}}
-    end
-  end
+  @callback process(message, state) :: {:continue, message, state} | {:terminate, state} when message: any(), state: any()
 
 end

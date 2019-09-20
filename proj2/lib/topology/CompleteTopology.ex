@@ -3,8 +3,8 @@ defmodule CompleteTopology do
 
   @impl NetworkTopology
   def get_neighbors(nodes) do
-    Enum.map(1..nodes, fn id1 ->
-      Enum.filter(1..nodes, fn id2 -> id1 != id2 end)
+    Enum.map(0..nodes - 1, fn id1 ->
+      Enum.filter(0..nodes - 1, fn id2 -> id1 != id2 end)
     end)
   end
 

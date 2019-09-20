@@ -2,16 +2,16 @@ defmodule GossipAlgorithm do
   @behaviour NetworkAlgorithm
 
   @impl NetworkAlgorithm
-  def init(_) do
-    {0}
-  end
+  def init_state(_), do: 0
 
   @impl NetworkAlgorithm
-  def process(message, {count}) do
-    c = count + 1
-    cond do
-      c < 10 -> {:continue, message, {c}}
-      true -> {:terminate, {c}}
+  def init_message(message), do: message
+
+  @impl NetworkAlgorithm
+  def process(message, count) do
+    case count + 1 do
+      10 -> {:terminate, 10}
+      c -> {:continue, message, c}
     end
   end
 

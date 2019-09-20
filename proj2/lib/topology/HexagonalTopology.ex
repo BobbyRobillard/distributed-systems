@@ -3,10 +3,10 @@ defmodule HexagonalTopology do
 
   @impl NetworkTopology
   def get_neighbors(nodes) do
-    points = Enum.map(1..nodes, fn id ->
-      if id == 1 do {id, 0, 0} else
-        ring = ceil((:math.sqrt(12 * id - 3) - 3) / 6)
-        norm = id - 3 * ring * (ring - 1) - 2
+    points = Enum.map(0..nodes - 1, fn id ->
+      if id == 0 do {id, 0, 0} else
+        ring = ceil((:math.sqrt(12 * id + 9) - 3) / 6)
+        norm = id - 3 * ring * (ring - 1) - 1
         rem = rem(norm, ring)
         case div(norm, ring) do
           0 -> {id, ring - rem, rem}
