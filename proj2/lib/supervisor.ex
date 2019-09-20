@@ -8,7 +8,7 @@ defmodule Proj2.Supervisor do
 
 
   def start_node(node_id, neighbors, algorithm) do
-    Supervisor.start_child(:node_supervisor, [node_id, neighbors]) # Start new node
+    Supervisor.start_child(:node_supervisor, [node_id]) # Start new node
     Node.update_state(# Setup initial state of node that was just created
       node_id,
       NetworkAlgorithm.init(node_id, neighbors, algorithm)
