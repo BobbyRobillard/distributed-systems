@@ -11,18 +11,18 @@ defmodule Proj2.Node do
   end
 
 
-  def demo(node_number, message) do
-    GenServer.cast(via_tuple(node_number), {:demo, message})
+  def update_state(node, state) do
+    GenServer.cast(via_tuple(node), {:update_state, state})
   end
 
 
-  def get_state(node_number) do
-    GenServer.call(via_tuple(node_number), :get_state)
+  def get_state(node) do
+    GenServer.call(via_tuple(node), :get_state)
   end
 
 
-  defp via_tuple(node_number) do
-    {:via, Proj2.Registry, {:node, node_number}}
+  defp via_tuple(node) do
+    {:via, Proj2.Registry, {:node, node}}
   end
 
 
@@ -37,8 +37,8 @@ defmodule Proj2.Node do
   end
 
 
-  def handle_cast({:demo, message}, state) do
-      IO.puts message
+  def handle_cast({:update_state, new_state}, state) do
+      # Algorithm.NetworkAlgorithm(new_state)
       {:noreply, state}
   end
 
