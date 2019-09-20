@@ -7,7 +7,10 @@ defmodule Node do
 
 
   def start_link(node_id, neighbors, algorithm) do
-    GenServer.start_link(__MODULE__, [], name: via_tuple(node_id))
+    GenServer.start_link(
+      __MODULE__,
+      NetworkAlgorithm.init(node_id, neighbors, algorithm),
+      name: via_tuple(node_id))
   end
 
 
@@ -31,12 +34,12 @@ defmodule Node do
   #############################################################################
 
 
-  def init(node_id, neighbors, algorithm) do
-    {:ok, NetworkAlgorithm.init(node_id, neighbors, algorithm)}
+  def init(_stuff) do
+    {:ok, []}
   end
 
 
-  def handle_cast({:update_state, new_state}, state) do
+  def handle_cast({:update_state, new_state}, _state) do
       {:noreply, new_state}
   end
 
