@@ -18,7 +18,7 @@ defmodule Proj2.Supervisor do
 
   def setup_nodes(nodes, topology, algorithm) do
     neighbors = NetworkTopology.get_neighbors(nodes, topology)
-    nodes = Enum.reduce(1..nodes, [], fn node_id, acc ->
+    Enum.reduce(1..nodes, [], fn node_id, acc ->
         acc ++ [
           Proj2.Supervisor.start_node(
             node_id,
@@ -29,6 +29,7 @@ defmodule Proj2.Supervisor do
     end)
   end
 
+
   def init(_) do
     children = [
       worker(Proj2.Node, [])
@@ -36,5 +37,6 @@ defmodule Proj2.Supervisor do
 
     supervise(children, strategy: :simple_one_for_one)
   end
+
 
 end
