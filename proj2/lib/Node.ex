@@ -18,10 +18,7 @@ defmodule Node do
       end
       state = case algorithm.process(message, state) do
         {:continue, message, state} ->
-          case neighbors do
-            [] -> Task.async(&Network.terminate/0)
-            neighbors -> Node.send(Enum.random(neighbors), message)
-          end
+          Node.send(Enum.random(neighbors), message)
           state
         {:terminate, state} ->
           Task.async(&Network.terminate/0)

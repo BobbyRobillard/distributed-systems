@@ -2,15 +2,18 @@ defmodule Network do
   use Supervisor
 
   def start_link(nodes, topology, algorithm) do
-    Agent.start_link(fn -> {nodes, 0, System.monotonic_time()} end, name: :global)
-    workers = topology.get_neighbors(nodes)
-              |> Enum.with_index()
-              |> Enum.map(fn {neighbors, id} ->
-      worker(Node, [id, neighbors, algorithm], [id: id])
-    end)
-    Supervisor.start_link(Network, [supervisor(Registry, [:unique, :registry]) | workers], name: :network)
-    Node.send(0, algorithm.init_message("Hello there!"))
-    run()
+    case topology.get_neighbors(nodes) do
+      [[] | _] -> IO.puts "Node 0 has no neighbors."
+      neighbors ->
+        workers = Enum.with_index(neighbors)
+          |> Enum.map(fn {neighbors, id} ->
+            worker(Node, [id, neighbors, algorithm], [id: id])
+          end)
+        Supervisor.start_link(Network, [supervisor(Registry, [:unique, :registry]) | workers], name: :network)
+        Agent.start_link(fn -> {nodes, 0, System.monotonic_time()} end, name: :global)
+        Node.send(0, algorithm.init_message("Hello there!"))
+        run()
+    end
   end
 
   defp run(), do: run()
