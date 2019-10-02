@@ -1,21 +1,18 @@
 # Proj2
 
-**TODO: Add description**
+**Team Members:**
+- Robert Robillard
+- William B. Anderson
 
-## Installation
+**What is Working:**
+- Everything
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `proj2` to your list of dependencies in `mix.exs`:
+**What is the largest network you managed to deal with for each type of
+ topology and algorithm:**
+- We managed to run with 500 nodes in each topology in each algorithm.
+Past that it simply took too long to obtain results from given the time constraints.
+Should we have used a more powerful machine we probably could have pushed 1000 without issues.
 
-```elixir
-def deps do
-  [
-    {:proj2, "~> 0.1.0"}
-  ]
-end
-```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/proj2](https://hexdocs.pm/proj2).
-
+# Note
+There are is an additional folder "output_data" which contains all the raw data
+and xlsx from which the graphs in our report are derived.
