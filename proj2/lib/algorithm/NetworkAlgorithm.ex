@@ -1,7 +1,7 @@
-defmodule NetworkAlgorithm do
+defmodule Proj2.NetworkAlgorithm do
 
-  def of("gossip"), do: GossipAlgorithm
-  def of("push-sum"), do: PushSumAlgorithm
+  def of("gossip"), do: Proj2.GossipAlgorithm
+  def of("push-sum"), do: Proj2.PushSumAlgorithm
 
   @callback init_state(id :: integer()) :: any()
 

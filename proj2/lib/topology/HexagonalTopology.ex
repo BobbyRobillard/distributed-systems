@@ -1,7 +1,7 @@
-defmodule HexagonalTopology do
-  @behaviour NetworkTopology
+defmodule Proj2.HexagonalTopology do
+  @behaviour Proj2.NetworkTopology
 
-  @impl NetworkTopology
+  @impl Proj2.NetworkTopology
   def get_neighbors(nodes) do
     points = Enum.map(0..nodes - 1, fn id ->
       if id == 0 do {id, 0, 0} else

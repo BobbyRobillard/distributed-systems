@@ -1,13 +1,13 @@
-defmodule GossipAlgorithm do
-  @behaviour NetworkAlgorithm
+defmodule Proj2.GossipAlgorithm do
+  @behaviour Proj2.NetworkAlgorithm
 
-  @impl NetworkAlgorithm
+  @impl Proj2.NetworkAlgorithm
   def init_state(_), do: 0
 
-  @impl NetworkAlgorithm
+  @impl Proj2.NetworkAlgorithm
   def init_message(message), do: message
 
-  @impl NetworkAlgorithm
+  @impl Proj2.NetworkAlgorithm
   def process(message, count) do
     case count + 1 do
       10 -> {:terminate, 10}

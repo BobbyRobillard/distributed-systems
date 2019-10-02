@@ -1,7 +1,7 @@
-defmodule LinearTopology do
-  @behaviour NetworkTopology
+defmodule Proj2.LinearTopology do
+  @behaviour Proj2.NetworkTopology
 
-  @impl NetworkTopology
+  @impl Proj2.NetworkTopology
   def get_neighbors(nodes) do
     Enum.map(0..nodes - 1, fn id ->
       Enum.filter([id - 1, id + 1], fn id ->

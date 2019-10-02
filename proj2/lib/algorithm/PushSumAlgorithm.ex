@@ -1,13 +1,13 @@
-defmodule PushSumAlgorithm do
-  @behaviour NetworkAlgorithm
+defmodule Proj2.PushSumAlgorithm do
+  @behaviour Proj2.NetworkAlgorithm
 
-  @impl NetworkAlgorithm
+  @impl Proj2.NetworkAlgorithm
   def init_state(id), do: {id, 1, id, 0}
 
-  @impl NetworkAlgorithm
+  @impl Proj2.NetworkAlgorithm
   def init_message(message), do: {message, 0, 0}
 
-  @impl NetworkAlgorithm
+  @impl Proj2.NetworkAlgorithm
   def process({message, sm, wm}, {s, w, ratio, count}) do
     s = s + sm
     w = w + wm

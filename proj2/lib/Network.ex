@@ -1,4 +1,4 @@
-defmodule Network do
+defmodule Proj2.Network do
   use Supervisor
 
   def start_link(nodes, topology, algorithm) do
@@ -7,11 +7,11 @@ defmodule Network do
       neighbors ->
         workers = Enum.with_index(neighbors)
           |> Enum.map(fn {neighbors, id} ->
-            worker(Node, [id, neighbors, algorithm], [id: id])
+            worker(Proj2.Node, [id, neighbors, algorithm], [id: id])
           end)
-        Supervisor.start_link(Network, [supervisor(Registry, [:unique, :registry]) | workers], name: :network)
+        Supervisor.start_link(Proj2.Network, [supervisor(Registry, [:unique, :registry]) | workers], name: :network)
         Agent.start_link(fn -> {nodes, 0, System.monotonic_time()} end, name: :global)
-        Node.send(0, algorithm.init_message("Hello there!"))
+        Proj2.Node.send(0, algorithm.init_message("Hello there!"))
         run()
     end
   end
