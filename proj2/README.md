@@ -4,6 +4,10 @@
 - Robert Robillard
 - William B. Anderson
 
+**Compile With:**
+- $ mix escript.build
+- $ ./proj2 <num_nodes> <topology> <algorithm>
+
 **What is Working:**
 - Everything
 
@@ -13,6 +17,6 @@
 Past that it simply took too long to obtain results from given the time constraints.
 Should we have used a more powerful machine we probably could have pushed 1000 without issues.
 
-# Note
-There are is an additional folder "output_data" which contains all the raw data
+**Note:**
+- There are is an additional folder "output_data" which contains all the raw data
 and xlsx from which the graphs in our report are derived.
