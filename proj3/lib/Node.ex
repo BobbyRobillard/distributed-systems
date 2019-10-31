@@ -1,24 +1,20 @@
 defmodule Proj3.Node do
   use GenServer
 
-  def join_network() do
-    IO.puts "Joining"
+  def receive_message(node_id, message)do
+    IO.puts "Message received"
   end
 
-  def leave_network do
-    IO.puts "Leaving"
+  def pass_message(node_id, receiver_id, message) do
+    IO.puts "Sending message to node"
   end
 
-  def route_to_node do
-    IO.puts "Sending to node"
+  def start_link(node_id, hash_table) do
+    state = {hash_table}
+    GenServer.start_link(Proj3.Node, state, name: Proj3.Network.name(node_id))
   end
 
-  # def start_link(id, neighbors, algorithm) do
-  #   state = {neighbors, algorithm, algorithm.init_state(id), false}
-  #   GenServer.start_link(Proj3.Node, state, name: Proj3.Network.name(id))
-  # end
-  #
-  # def send(id, message), do: GenServer.cast(Proj3.Network.name(id), {:process, message})
+  def send(node_id, receiver_id, message), do: GenServer.cast(Proj3.Node.name(node_id), {:pass_message, message})
   #
   # @impl GenServer
   # def init(state), do: {:ok, state}
