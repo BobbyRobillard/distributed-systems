@@ -1,5 +1,12 @@
 defmodule Proj3.Network do
   use Supervisor
+  use Bitwise
+
+  def name(id), do: {:via, Registry, {:registry, id}}
+
+  def gen_id(), do: :rand.uniform(0x10000) - 1
+
+  def digit_at(id, level), do: (id >>> (16 - 4 * level)) &&& 0xF
 
   def start_link(num_nodes) do
     IO.puts "Network started..."
@@ -22,6 +29,13 @@ defmodule Proj3.Network do
     Supervisor.start_link(Proj3.Network, [supervisor(Registry, [:unique, :registry]) | [root] | nodes], name: :network)
 
     run()
+  end
+
+  def create_node() do
+    id = gen_id();
+    #TODO: Start worker
+    Proj3.Node.insert(-1, gen_id, 1)
+    id
   end
 
   def add_node(node_id) do
