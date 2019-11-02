@@ -1,5 +1,5 @@
 defmodule Proj3.Network do
-  use Supervisor
+  use DynamicSupervisor
   use Bitwise
 
   def name(id), do: {:via, Registry, {:registry, id}}
@@ -11,32 +11,31 @@ defmodule Proj3.Network do
   def start_link(num_nodes) do
     IO.puts "Network started..."
 
-    # Intialize global hash table
-    Agent.start_link(fn -> %{} end, name: :global)
+    # Initialize our registry. This will know of all nodes in the network.
+    DynamicSupervisor.start_link(__MODULE__, [], name: :network)
 
-    # Initialize the DHT of the root node
-    add_node(get_id())
+    # dynamic_supervisor(Registry,[:unique, :registry])
+
+    # Initialize root node
+    start_child()
 
     # Spawn off any additonal nodes as needed
-    nodes = 1..num_nodes
-    |> Enum.each(fn  ->
-        # Each nodes needs to be initialized with the proper hash map
-        id = get_id()
-        worker(Proj3.Node, [id, get_neighbors(id)], [id: id])
-      end)
+    Enum.each(1..num_nodes, fn x -> start_child() end)
 
-    # Initialize our registry. This will know of all nodes in the network.
-    Supervisor.start_link(Proj3.Network, [supervisor(Registry, [:unique, :registry]) | [root] | nodes], name: :network)
-
+    IO.puts "Network running"
     run()
   end
 
-  def create_node() do
-    id = gen_id();
-    #TODO: Start worker
-    Proj3.Node.insert(-1, gen_id, 1)
-    id
+  def start_child() do
+    # If MyWorker is not using the new child specs, we need to pass a map:
+    # spec = %{id: MyWorker, start: {MyWorker, :start_link, [foo, bar, baz]}}
+    spec = {Proj3.Node, id: gen_id()}
+    DynamicSupervisor.start_child(__MODULE__, spec)
   end
+
+  defp run, do: run()
+
+  def demo, do: IO.puts "okay"
 
   def add_node(node_id) do
     # Access global list
@@ -58,7 +57,12 @@ defmodule Proj3.Network do
     # Remove node from global hash table if needed
   end
 
-  @impl Supervisor
-  def init(children), do: supervise(children, strategy: :one_for_one)
+  @impl true
+ def init(init_arg) do
+   DynamicSupervisor.init(
+     strategy: :one_for_one,
+     extra_arguments: [init_arg]
+   )
+ end
 
 end
