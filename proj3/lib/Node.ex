@@ -15,7 +15,10 @@ defmodule Proj3.Node do
   def print(id), do: GenServer.call(Proj3.Network.name(id), {:print})
 
   @impl GenServer
-  def init(state), do: {:ok, state}
+  def init(state) do
+    IO.puts "NINJAS"
+    {:ok, state}
+  end
 
   @impl GenServer
   def handle_cast({:insert, node, level}, {id, routing_mesh}) do

@@ -11,31 +11,26 @@ defmodule Proj3.Network do
   def start_link(num_nodes) do
     IO.puts "Network started..."
 
-    # Initialize our registry. This will know of all nodes in the network.
-    DynamicSupervisor.start_link(__MODULE__, [], name: :network)
+    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)
 
     # dynamic_supervisor(Registry,[:unique, :registry])
 
-    # Initialize root node
-    start_child()
-
-    # Spawn off any additonal nodes as needed
-    Enum.each(1..num_nodes, fn x -> start_child() end)
-
-    IO.puts "Network running"
-    run()
+    # # Initialize root node
+    # start_child()
+    #
+    # # Spawn off any additonal nodes as needed
+    # Enum.each(1..num_nodes, fn x -> start_child() end)
   end
+
+  @impl true
+  def init(_init_arg), do: DynamicSupervisor.init(strategy: :one_for_one)
 
   def start_child() do
     # If MyWorker is not using the new child specs, we need to pass a map:
     # spec = %{id: MyWorker, start: {MyWorker, :start_link, [foo, bar, baz]}}
-    spec = {Proj3.Node, id: gen_id()}
+    spec = {Proj3.Node, name: gen_id()}
     DynamicSupervisor.start_child(__MODULE__, spec)
   end
-
-  defp run, do: run()
-
-  def demo, do: IO.puts "okay"
 
   def add_node(node_id) do
     # Access global list
@@ -56,13 +51,5 @@ defmodule Proj3.Network do
     # Multicast to immediate neighbors about node's removal
     # Remove node from global hash table if needed
   end
-
-  @impl true
- def init(init_arg) do
-   DynamicSupervisor.init(
-     strategy: :one_for_one,
-     extra_arguments: [init_arg]
-   )
- end
 
 end
