@@ -8,48 +8,44 @@ defmodule Proj3.Network do
 
   def digit_at(id, level), do: (id >>> (16 - 4 * level)) &&& 0xF
 
-  def start_link(num_nodes) do
-    IO.puts "Network started..."
-
-    DynamicSupervisor.start_link(__MODULE__, :ok, name: __MODULE__)
-
-    # dynamic_supervisor(Registry,[:unique, :registry])
-
-    # # Initialize root node
-    # start_child()
-    #
-    # # Spawn off any additonal nodes as needed
-    # Enum.each(1..num_nodes, fn x -> start_child() end)
+  def start_link(_) do
+    DynamicSupervisor.start_link(__MODULE__, [], name: __MODULE__)
+    Agent.start_link(fn -> %{} end, name: :roots)
+    Agent.start_link(fn -> 0 end, name: :hops)
   end
 
-  @impl true
-  def init(_init_arg), do: DynamicSupervisor.init(strategy: :one_for_one)
-
-  def start_child() do
-    # If MyWorker is not using the new child specs, we need to pass a map:
-    # spec = %{id: MyWorker, start: {MyWorker, :start_link, [foo, bar, baz]}}
-    spec = {Proj3.Node, name: gen_id()}
-    DynamicSupervisor.start_child(__MODULE__, spec)
+  def start_node(id) do
+    DynamicSupervisor.start_child(Proj3.Network, %{
+      id: Proj3.Node,
+      start: {Proj3.Node, :start_link, [id]},
+      restart: :transient
+    })
+    Agent.update(:roots, fn roots ->
+      digit = digit_at(id, 1)
+      case roots[digit] do
+        nil ->
+          Proj3.Node.init_mesh(id, 1, roots)
+          Enum.each(roots, fn {_, i} ->
+            Proj3.Node.update(i, id, 1)
+          end)
+          Map.put(roots, digit, id)
+        node ->
+          Proj3.Node.insert(node, id, 1)
+          if id < node do
+            Map.put(roots, digit, id)
+          else
+            roots
+          end
+      end
+    end)
+    id
   end
 
-  def add_node(node_id) do
-    # Access global list
-    routing_map = Agent.get(:global, & &1)
-
-    # See if anything needs to be replaced in global hash table
-      # Get the first digit of the node_id, find that corresponding entry in the GHT
-      # If new node's id less than value in GHT, update value
-    # Use global hash table to generate hash table for new node
-    # Add new node to network
-    # Have new node multicast to entries in its hash table about its existence
-    # Print new node's id to user
+  def lookup(from, to) do
+    Proj3.Node.next_hop(from, to, 1)
   end
 
-  def remove_node(node_id) do
-    # Access global list
-    routing_map = Agent.get(:global, & &1)
-    # Multicast to immediate neighbors about node's removal
-    # Remove node from global hash table if needed
-  end
+  @impl DynamicSupervisor
+  def init(_), do: DynamicSupervisor.init(strategy: :one_for_one)
 
 end
