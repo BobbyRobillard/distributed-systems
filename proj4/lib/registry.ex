@@ -1,4 +1,4 @@
-defmodule Proj1.Registry do
+defmodule Proj4.Registry do
   use GenServer
 
   ##############################################################################
