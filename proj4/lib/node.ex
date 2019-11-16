@@ -5,8 +5,8 @@ defmodule Proj4.Node do
   # Public API
   # ----------------------------------------------------------------------------
 
-  def start_link(name) do
-    GenServer.start_link(__MODULE__, [], name: via_tuple(name))
+  def start_link(username) do
+    GenServer.start_link(__MODULE__, [username], name: via_tuple(username))
   end
 
   defp via_tuple(username) do
@@ -17,8 +17,16 @@ defmodule Proj4.Node do
     GenServer.cast(via_tuple(username), {:publish_tweet, tweet})
   end
 
-  def get_tweets(username) do
-    GenServer.call(via_tuple(username), :get_tweets)
+  def receive_tweet(username, tweet) do
+    GenServer.cast(via_tuple(username), {:receive_tweet, tweet})
+  end
+
+  def add_follower(username, follower) do
+    GenServer.cast(via_tuple(username), {:add_follower, follower})
+  end
+
+  def remove_follower(username, follower) do
+    GenServer.cast(via_tuple(username), {:remove_follower, follower})
   end
 
   # def follow_user(username, user_to_follow) do
@@ -50,26 +58,48 @@ defmodule Proj4.Node do
   # ----------------------------------------------------------------------------
 
   @impl GenServer
-  def init(state) do
-    tweets = :ets.new(:tweets, [:public, :named_table])
-
-    followers = :ets.new(:followers, [:set, :protected])
-
-    {:ok, %{tweets: tweets, followers: followers}}
+  def init(username) do
+    tweets = :ets.new(:tweets, [:set, :private])
+    followers = :ets.new(:followers, [:set, :private])
+    {:ok, %{
+      username: username,
+      tweets: tweets,
+      followers: followers
+    }}
   end
 
   @impl GenServer
   def handle_cast({:publish_tweet, tweet}, state) do
     # Send tweet to all our followers
     # Store tweet in our tweets only if it's not a re-tweet
-    :ets.insert_new(:tweets, {:key, "demo"})
+    :ets.insert(state[:tweets], {tweet})
+    broadcast_tweet(tweet, state[:followers], :ets.first(state[:followers]))
+    {:noreply, state}
+  end
+
+  defp broadcast_tweet(_tweet, _followers, :"$end_of_table"), do: nil
+  defp broadcast_tweet(tweet, followers, key) do
+    IO.puts "Broadcast to #{key}"
+    receive_tweet(key, tweet)
+    broadcast_tweet(tweet, followers, :ets.next(followers, key))
+  end
+
+  @impl GenServer
+  def handle_cast({:receive_tweet, tweet}, state) do
+    IO.puts "#{state[:username]} received tweet: #{tweet}"
     {:noreply, state}
   end
 
   @impl GenServer
-  def handle_call(:get_tweets, _from, state) do
-    result = :ets.lookup(:tweets, :key)
-    {:reply, result, []}
+  def handle_cast({:add_follower, follower}, state) do
+    :ets.insert(state[:followers], {follower})
+    {:noreply, state}
+  end
+
+  @impl GenServer
+  def handle_cast({:remove_follower, follower}, state) do
+    :ets.delete(state[:followers], follower)
+    {:noreply, state}
   end
 
   # @impl GenServer
