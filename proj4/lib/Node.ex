@@ -5,18 +5,8 @@ defmodule Proj4.Node do
   # Public API
   # ----------------------------------------------------------------------------
 
-  def start_link(username) do
-    # Init ETS for actor
-    followers = :ets.new(:followers, [:set, :protected])
-
-    tweets = :ets.new(:tweets, [:set, :protected])
-
-    # Start Genserver holding user's state
-    GenServer.start_link(
-      __MODULE__,
-      %{username: username, is_online: :false, followers: followers, tweets: tweets},
-      name: via_tuple(username)
-    )
+  def start_link(name) do
+    GenServer.start_link(__MODULE__, [], name: via_tuple(name))
   end
 
   defp via_tuple(username) do
@@ -61,27 +51,25 @@ defmodule Proj4.Node do
 
   @impl GenServer
   def init(state) do
-    {:ok, state}
+    tweets = :ets.new(:tweets, [:public, :named_table])
+
+    followers = :ets.new(:followers, [:set, :protected])
+
+    {:ok, %{tweets: tweets, followers: followers}}
   end
 
   @impl GenServer
   def handle_cast({:publish_tweet, tweet}, state) do
-    # Map.get(state, :followers)
-    # |> Enum.each(fn follower -> Proj4.Node.receive_tweet(follower, tweet) end)
-
+    # Send tweet to all our followers
     # Store tweet in our tweets only if it's not a re-tweet
-    # if Map.get(tweet, :owner_username) == Map.get(state, username) do
-    #   tweets = Map.get(state, :tweets) | tweet
-    #   Map.put(state, :tweets, tweets)
-    # end
-    # tweets = Map.get(state, :tweets)
-    :ets.insert_new(:tweets, {"123", tweet})
+    :ets.insert_new(:tweets, {:key, "demo"})
+    {:noreply, state}
   end
 
   @impl GenServer
   def handle_call(:get_tweets, _from, state) do
-    result = :ets.lookup(Map.get(state, :tweets), "123")
-    {:ok, result, state}
+    result = :ets.lookup(:tweets, :key)
+    {:reply, result, []}
   end
 
   # @impl GenServer
