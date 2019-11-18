@@ -122,11 +122,14 @@ defmodule Proj4.Node do
 
   @impl GenServer
   def handle_call({:query_tweets, query}, _from, state) do
+    # Get tweets from ETS query for anything that matches
     matching_tweets = Map.get(state, :tweets)
     |> :ets.tab2list
     |> Enum.reduce([], fn tweet, acc ->
         (if is_matching_tweet(tweet, query) do acc ++ [tweet] else acc end)
     end)
+    # Formating to remove format of Genserver/ETS storage format.
+    |> Enum.map(fn tweet -> tweet |> Tuple.to_list |> Enum.at(0) end)
 
     {:reply, matching_tweets, state}
   end

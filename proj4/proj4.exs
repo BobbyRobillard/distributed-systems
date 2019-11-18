@@ -22,12 +22,14 @@ Proj4.Node.publish_tweet(
   }
 )
 
-Proj4.Node.query_tweets("therealdonaldtrump", "maga")
-|> Enum.each(fn tweet ->
-      res = tweet
-      |> Tuple.to_list
-      |> Enum.at(0)
-
-      IO.puts res[:content]
-    end
+Proj4.Node.publish_tweet(
+  "therealdonaldtrump",
+  %{
+    hashtags: ["trump","2020", "election"],
+    mentions: ["therealdonaldtrump"],
+    content: "Guess who has my vote in 2020?!"
+  }
 )
+
+Proj4.Node.query_tweets("therealdonaldtrump", "trump")
+|> Enum.each(fn tweet -> IO.puts tweet[:content] end)
