@@ -141,7 +141,6 @@ defmodule Proj4.Node do
   # ----------------------------------------------------------------------------
 
   def is_matching_tweet(tweet, query) do
-
     query = String.downcase(query)
 
     tweet =
