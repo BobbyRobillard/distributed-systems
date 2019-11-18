@@ -122,11 +122,13 @@ defmodule Proj4.Node do
 
   @impl GenServer
   def handle_call({:query_tweets, query}, _from, state) do
-    # Search all our tweets. See if the query is contained in the mentions, hashtags, or text of a tweet
-    Map.get(state, :tweets)
-    |> Enum.reduce(fn tweet, acc -> (if is_matching_tweet(tweet, query) do acc ++ [tweet] else acc end) end)
+    matching_tweets = Map.get(state, :tweets)
+    |> :ets.tab2list
+    |> Enum.reduce([], fn tweet, acc ->
+        (if is_matching_tweet(tweet, query) do acc ++ [tweet] else acc end)
+    end)
 
-    # Search the tweets of all our followers
+    {:reply, matching_tweets, state}
   end
 
 
@@ -136,16 +138,23 @@ defmodule Proj4.Node do
   # ----------------------------------------------------------------------------
 
   def is_matching_tweet(tweet, query) do
-    # Search all mentions
-    query_matches_mention = Map.get(tweet, :mentions)
-    |> Enum.any?(fn mention -> mention == query end)
 
-    # Search all hashtags
-    query_matches_hashtag = Map.get(tweet, :hashtags)
-    |> Enum.any?(fn hashtag -> hashtag =~ query end)
+    query = String.downcase(query)
+
+    tweet =
+    tweet |> Tuple.to_list
+    |> Enum.at(0)
+
+    # Search all mentions
+    query_matches_mention = tweet[:mentions]
+    |> Enum.any?(fn mention -> String.downcase(mention) == query end)
+
+    # # Search all hashtags
+    query_matches_hashtag = tweet[:hashtags]
+    |> Enum.any?(fn hashtag -> String.downcase(hashtag) =~ query end)
 
     # Search tweet text
-    query_matches_text = Map.get(tweet, :content) =~ query
+    query_matches_text = String.downcase(tweet[:content]) =~ query
 
     # Return result
     query_matches_mention or query_matches_hashtag or query_matches_text

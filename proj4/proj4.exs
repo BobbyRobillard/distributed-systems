@@ -12,9 +12,7 @@ Proj4.Supervisor.start_link
 Proj4.Supervisor.start_node("therealdonaldtrump")
 Proj4.Supervisor.start_node("obama")
 Proj4.Supervisor.start_node("hillary")
-#
-Proj4.Node.add_follower("therealdonaldtrump", "obama")
-Proj4.Node.add_follower("therealdonaldtrump", "hillary")
+
 Proj4.Node.publish_tweet(
   "therealdonaldtrump",
   %{
@@ -24,5 +22,12 @@ Proj4.Node.publish_tweet(
   }
 )
 
-Proj4.Node.query_tweets("1", "america")
-|> Enum.each(fn tweet -> IO.puts tweet[:content] end)
+Proj4.Node.query_tweets("therealdonaldtrump", "maga")
+|> Enum.each(fn tweet ->
+      res = tweet
+      |> Tuple.to_list
+      |> Enum.at(0)
+
+      IO.puts res[:content]
+    end
+)
