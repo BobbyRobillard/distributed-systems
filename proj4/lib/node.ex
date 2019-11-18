@@ -21,12 +21,20 @@ defmodule Proj4.Node do
     GenServer.cast(via_tuple(username), {:receive_tweet, tweet})
   end
 
+  def get_tweets(username) do
+    GenServer.call(via_tuple(username), :get_tweets)
+  end
+
   def add_follower(username, follower) do
     GenServer.cast(via_tuple(username), {:add_follower, follower})
   end
 
   def remove_follower(username, follower) do
     GenServer.cast(via_tuple(username), {:remove_follower, follower})
+  end
+
+  def get_followers(username) do
+    GenServer.call(via_tuple(username), :get_followers)
   end
 
   # def follow_user(username, user_to_follow) do
@@ -36,10 +44,10 @@ defmodule Proj4.Node do
   # def retweet(username, tweet) do
   #   GenServer.cast(via_tuple(username), {:publish_tweet, tweet})
   # end
-  #
-  # def query_tweets(username, query) do
-  #   GenServer.call(via_tuple(username), {:query_tweets, query})
-  # end
+
+  def query_tweets(username, query) do
+    GenServer.call(via_tuple(username), {:query_tweets, query})
+  end
 
   # ----------------------------------------------------------------------------
   # Internal API
@@ -86,8 +94,13 @@ defmodule Proj4.Node do
 
   @impl GenServer
   def handle_cast({:receive_tweet, tweet}, state) do
-    IO.puts "#{state[:username]} received tweet: #{tweet}"
+    IO.puts "#{state[:username]} received tweet: #{tweet[:content]}"
     {:noreply, state}
+  end
+
+  @impl GenServer
+  def handle_call(:get_tweets, _from, state) do
+    {:reply, (Map.get(state, :tweets) |> :ets.tab2list), state}
   end
 
   @impl GenServer
@@ -102,58 +115,40 @@ defmodule Proj4.Node do
     {:noreply, state}
   end
 
-  # @impl GenServer
-  # def handle_cast({:follow_user, username_of_follower, user_to_follow}) do
-  #   # Add follower to other user's list of followers
-  #   Proj4.Node.follow(user_to_follow, username_of_follower)
-  # end
-  #
-  # @impl GenServer
-  # def handle_cast({:receive_tweet, tweet}) do
-  #   # Convert tweet into a user-friendly format
-  #   user_friendly_tweet = "This is the user friendly tweet"
-  #
-  #   # Check if tweet is a retweet, updating user-friendly tweet as necessary
-  #   if Map.get(tweet, :owner_username) != Map.get(state, username) do
-  #     user_friendly_tweet = "This is retweeted userfriendly tweet"
-  #   end
-  #
-  #   # Check if the tweet should be seen immediatley or sent to the user's mailbox
-  #   if Map.get(state, is_online) == :true do
-  #     IO.puts "Received Tweet"
-  #   else
-  #     new_mailbox = Map.get(state, :mailbox) | [user_friendly_tweet]
-  #     Map.replace(state, :mailbox, new_mailbox)
-  #   end
-  # end
-  #
-  # @impl GenServer
-  # def handle_call({:query_tweets, query}) do
-  #   # Search all our tweets. See if the query is contained in the mentions, hashtags, or text of a tweet
-  #   Map.get(state, :tweets)
-  #   |> Enum.reduce(fn tweet, acc -> (if is_matching_tweet(tweet, query) do acc | [tweet] else acc end) end)
-  # end
+  @impl GenServer
+  def handle_call(:get_followers, _from, state) do
+    {:reply, (Map.get(state, :followers) |> :ets.tab2list), state}
+  end
+
+  @impl GenServer
+  def handle_call({:query_tweets, query}, _from, state) do
+    # Search all our tweets. See if the query is contained in the mentions, hashtags, or text of a tweet
+    Map.get(state, :tweets)
+    |> Enum.reduce(fn tweet, acc -> (if is_matching_tweet(tweet, query) do acc ++ [tweet] else acc end) end)
+
+    # Search the tweets of all our followers
+  end
 
 
 
   # ----------------------------------------------------------------------------
   # Helper Methods
   # ----------------------------------------------------------------------------
-  #
-  # def is_matching_tweet(tweet, query) do
-  #   # Search all mentions
-  #   query_matches_mention = Map.get(tweet, :mentions)
-  #   |> Enum.any?(fn mention -> mention == query end)
-  #
-  #   # Search all hashtags
-  #   query_matches_hashtag = Map.get(tweet, :hashtags)
-  #   |> Enum.any?(fn hashtag -> hashtag =~ query end)
-  #
-  #   # Search tweet text
-  #   query_matches_text = Map.get(tweet, :text) =~ query
-  #
-  #   # Return result
-  #   query_matches_mention or query_matches_hashtag or query_matches_text
-  # end
+
+  def is_matching_tweet(tweet, query) do
+    # Search all mentions
+    query_matches_mention = Map.get(tweet, :mentions)
+    |> Enum.any?(fn mention -> mention == query end)
+
+    # Search all hashtags
+    query_matches_hashtag = Map.get(tweet, :hashtags)
+    |> Enum.any?(fn hashtag -> hashtag =~ query end)
+
+    # Search tweet text
+    query_matches_text = Map.get(tweet, :content) =~ query
+
+    # Return result
+    query_matches_mention or query_matches_hashtag or query_matches_text
+  end
 
 end

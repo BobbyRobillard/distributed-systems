@@ -1,11 +1,28 @@
+
 Proj4.Registry.start_link
 Proj4.Supervisor.start_link
 
-Proj4.Supervisor.start_node("user1")
-Proj4.Supervisor.start_node("user2")
-Proj4.Supervisor.start_node("user3")
+# nodes = Enum.reduce(
+#   ,
+#   [],
+#   fn id, nodes ->  end
+# )
 
-Proj4.Node.add_follower("user1", "user2")
-Proj4.Node.add_follower("user1", "user3")
-Proj4.Node.publish_tweet("user1", "In the name of the father, the son, and the holy MAGA")
 
+Proj4.Supervisor.start_node("therealdonaldtrump")
+Proj4.Supervisor.start_node("obama")
+Proj4.Supervisor.start_node("hillary")
+#
+Proj4.Node.add_follower("therealdonaldtrump", "obama")
+Proj4.Node.add_follower("therealdonaldtrump", "hillary")
+Proj4.Node.publish_tweet(
+  "therealdonaldtrump",
+  %{
+    hashtags: ["trump", "america"],
+    mentions: ["obama"],
+    content: "For the love of MAGA"
+  }
+)
+
+Proj4.Node.query_tweets("1", "america")
+|> Enum.each(fn tweet -> IO.puts tweet[:content] end)
