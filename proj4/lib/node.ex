@@ -69,10 +69,12 @@ defmodule Proj4.Node do
   def init(username) do
     tweets = :ets.new(:tweets, [:set, :private])
     followers = :ets.new(:followers, [:set, :private])
+    following = :ets.new(:following, [:set, :private])
     {:ok, %{
       username: username,
       tweets: tweets,
-      followers: followers
+      followers: followers,
+      following: following
     }}
   end
 
@@ -123,11 +125,17 @@ defmodule Proj4.Node do
   @impl GenServer
   def handle_call({:query_tweets, query}, _from, state) do
     # Get tweets from ETS query for anything that matches
-    matching_tweets = Map.get(state, :tweets)
-    |> :ets.tab2list
-    |> Enum.reduce([], fn tweet, acc ->
-        (if is_matching_tweet(tweet, query) do acc ++ [tweet] else acc end)
-    end)
+    matching_tweets = [
+      # (Map.get(state, :tweets)
+      # |> :ets.tab2list
+      # |> Enum.reduce([], fn tweet, acc ->
+      #     (if is_matching_tweet(tweet, query) do acc ++ [tweet] else acc end)
+      # end)),
+      # Search the tweets of all the people we're following.
+      Map.get(state, :followers)
+      |> :ets.tab2list
+      |> Enum.map(fn follower -> Proj4.Node.query_tweets(follower[:username], query) end)
+    ]
     # Formating to remove format of Genserver/ETS storage format.
     |> Enum.map(fn tweet -> tweet |> Tuple.to_list |> Enum.at(0) end)
 
