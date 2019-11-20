@@ -13,8 +13,10 @@ Proj4.Supervisor.start_node("therealdonaldtrump")
 Proj4.Supervisor.start_node("obama")
 Proj4.Supervisor.start_node("hillary")
 
+Proj4.Node.follow_user("therealdonaldtrump", "obama")
+
 Proj4.Node.publish_tweet(
-  "therealdonaldtrump",
+  "obama",
   %{
     hashtags: ["trump", "america"],
     mentions: ["obama"],

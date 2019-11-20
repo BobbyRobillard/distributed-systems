@@ -19,7 +19,11 @@ defmodule Proj4.Node do
 
   def add_follower(username, follower), do: gen_cast(username, {:add_follower, follower})
 
+  def follow_user(username, user_to_follow), do: gen_cast(username, {:follow_user, user_to_follow})
+
   def remove_follower(username, follower), do: gen_cast(username, {:remove_follower, follower})
+
+  def remove_follower(username, user_to_unfollow), do: gen_cast(username, {:unfollow_user, user_to_unfollow})
 
   def get_tweets(username), do: gen_call(username, :get_tweets)
 
@@ -67,6 +71,23 @@ defmodule Proj4.Node do
   end
 
   @impl GenServer
+  def handle_cast({:follow_user, user_to_follow}, state) do
+    # Record that this user is following someone in their own ets
+    :ets.insert(state[:following], {user_to_follow})
+
+    # Record on user being followed that this person is following them
+    Proj4.Node.add_follower(user_to_follow, state[:username])
+
+    {:noreply, state}
+  end
+
+  @impl GenServer
+  def handle_cast({:unfollow_user, user_to_unfollow}, state) do
+    :ets.delete(state[:following], {user_to_unfollow})
+    {:noreply, state}
+  end
+
+  @impl GenServer
   def handle_cast({:remove_follower, follower}, state) do
     :ets.delete(state[:followers], follower)
     {:noreply, state}
@@ -82,14 +103,18 @@ defmodule Proj4.Node do
   def handle_call({:query_tweets, query}, _from, state) do
     query = String.downcase(query)
     # Get tweets from ETS query for anything that matches
-    matching_tweets = :ets.tab2list(state[:tweets])
+    self_matching_tweets = :ets.tab2list(state[:tweets])
       |> Enum.map(fn entry -> elem(entry, 0) end) #Extract tweet from tuple entry
       |> Enum.filter(fn tweet ->
         Enum.any?(tweet[:mentions], fn m -> String.downcase(m) == query end) #same as mention
         or Enum.any?(tweet[:hashtags], fn h -> String.downcase(h) == query end) #same as tag
         or String.downcase(tweet[:content]) =~ query #contains query
       end)
-    {:reply, matching_tweets, state}
+
+    matching_following_tweets = :ets.tab2list(state[:following])
+    |> Enum.map(fn user -> Proj4.Node.query_tweets(elem(user, 0), query) end)
+
+    {:reply, self_matching_tweets ++ List.flatten(matching_following_tweets), state}
   end
 
 end

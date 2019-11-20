@@ -101,8 +101,37 @@ defmodule Proj4Test do
     # Remove a follower which isn't following
     Proj4.Node.remove_follower("1", "2")
     assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
+
+    # Test following someone
+    Proj4.Node.follow_user("1", "2")
+    Proj4.Node.follow_user("1", "3")
+    assert (Proj4.Node.get_followers("2") |> Enum.count()) == 1
   end
 
   # ----------------------------------------------------------------------
+
+  test "Query Tweets Functionality" do
+    start_up()
+    add_nodes()
+
+    # Follow Users
+    Proj4.Node.follow_user("1", "2")
+    Proj4.Node.follow_user("1", "3")
+
+
+    tweet = %{
+      hashtags: ["trump", "america"],
+      mentions: ["obama"],
+      content: "abc123"
+    }
+
+    Proj4.Node.publish_tweet("1", tweet)
+    Proj4.Node.publish_tweet("2", tweet)
+
+    assert (Proj4.Node.query_tweets("1", "Trump for president: abc123!") |> Enum.count()) == 2
+
+    assert (Proj4.Node.query_tweets("1", "Hillary For President") |> Enum.count()) == 0
+
+  end
 
 end
