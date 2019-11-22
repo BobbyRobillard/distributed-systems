@@ -68,15 +68,12 @@ defmodule Proj4.Node do
 
   @impl GenServer
   def handle_cast({:follow_user, user}, state) do
-    IO.puts "follow_user #{user}"
     :ets.insert(state[:following], {user})
-    IO.puts "genserver called"
     {:noreply, state}
   end
 
   @impl GenServer
   def handle_cast({:add_follower, user}, state) do
-    IO.puts "add_follower #{user}"
     :ets.insert(state[:followers], {user})
     {:noreply, state}
   end
