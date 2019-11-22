@@ -127,9 +127,9 @@ defmodule Proj4Test do
     Proj4.Node.publish_tweet("1", tweet)
     Proj4.Node.publish_tweet("2", tweet)
 
-    assert (Proj4.Node.query_tweets("1", "president") |> Enum.count()) == 1
+    assert (Proj4.Node.query_tweets("1", "trump is a good president") |> Enum.count()) == 1
 
-    assert (Proj4.Node.query_tweets("1", "hillary") |> Enum.count()) == 0
+    assert (Proj4.Node.query_tweets("1", "hillary is a good pres1dent.") |> Enum.count()) == 0
 
   end
 
