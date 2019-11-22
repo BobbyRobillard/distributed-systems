@@ -19,12 +19,12 @@ defmodule Proj4.Node do
 
   def follow_user(username, user) do
     gen_cast(username, {:follow_user, user})
-    gen_cast(username, {:add_follower, user})
+    gen_cast(user, {:add_follower, username})
   end
 
   def unfollow_user(username, user) do
     gen_cast(username, {:unfollow_user, user})
-    gen_cast(username, {:remove_follower, user})
+    gen_cast(user, {:remove_follower, username})
   end
 
   def get_tweets(username), do: gen_call(username, :get_tweets)
