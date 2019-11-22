@@ -86,26 +86,24 @@ defmodule Proj4Test do
     add_nodes()
 
     # Test Adding A Follower
-    Proj4.Node.add_follower("1", "2")
-    Proj4.Node.add_follower("1", "2") # Make sure followers can't be added twice
+    Proj4.Node.follow_user("2", "1")
+    assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
+
+    # Make sure followers can't be added twice
+    Proj4.Node.follow_user("2", "1")
     assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
 
     # Add another follower
-    Proj4.Node.add_follower("1", "3")
+    Proj4.Node.follow_user("3", "1")
     assert (Proj4.Node.get_followers("1") |> Enum.count()) == 2
 
     # Test removing a follower
-    Proj4.Node.remove_follower("1", "2")
+    Proj4.Node.unfollow_user("2", "1")
     assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
 
     # Remove a follower which isn't following
-    Proj4.Node.remove_follower("1", "2")
+    Proj4.Node.unfollow_user("2", "1")
     assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
-
-    # Test following someone
-    Proj4.Node.follow_user("1", "2")
-    Proj4.Node.follow_user("1", "3")
-    assert (Proj4.Node.get_followers("2") |> Enum.count()) == 1
   end
 
   # ----------------------------------------------------------------------
@@ -115,22 +113,23 @@ defmodule Proj4Test do
     add_nodes()
 
     # Follow Users
-    Proj4.Node.follow_user("1", "2")
-    Proj4.Node.follow_user("1", "3")
+    Proj4.Node.follow_user("2", "1")
+    Proj4.Node.follow_user("3", "1")
+    Proj4.Node.follow_user("3", "2")
 
 
     tweet = %{
       hashtags: ["trump", "america"],
       mentions: ["obama"],
-      content: "abc123"
+      content: "Trump for president!"
     }
 
     Proj4.Node.publish_tweet("1", tweet)
     Proj4.Node.publish_tweet("2", tweet)
 
-    assert (Proj4.Node.query_tweets("1", "Trump for president: abc123!") |> Enum.count()) == 2
+    assert (Proj4.Node.query_tweets("1", "president") |> Enum.count()) == 1
 
-    assert (Proj4.Node.query_tweets("1", "Hillary For President") |> Enum.count()) == 0
+    assert (Proj4.Node.query_tweets("1", "hillary") |> Enum.count()) == 0
 
   end
 
