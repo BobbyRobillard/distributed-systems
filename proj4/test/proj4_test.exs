@@ -39,14 +39,13 @@ defmodule Proj4Test do
 
   # Make sure nodes can be added to the network.
   test "node initialization" do
-    start_up()
+    Proj4.Registry.start_link()
+    supervisor_pid = Proj4.Supervisor.start_link()
+    |> elem(1)
 
-    nodes = add_nodes()
+    add_nodes()
 
-    Enum.each(
-      nodes,
-      fn node -> assert (Tuple.to_list(node) |> Enum.at(0)) == :ok end
-    )
+    assert 10 == Supervisor.count_children(supervisor_pid)[:active]
   end
 
   # ----------------------------------------------------------------------
@@ -131,6 +130,11 @@ defmodule Proj4Test do
 
     assert (Proj4.Node.query_tweets("1", "hillary") |> Enum.count()) == 0
 
+  end
+
+  # ----------------------------------------------------------------------
+  test "Register User Functionality" do
+    start_up()
   end
 
 end

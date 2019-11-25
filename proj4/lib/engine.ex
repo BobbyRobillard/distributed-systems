@@ -1,7 +1,7 @@
 defmodule Proj4.Engine do
 
   def main() do
-   IO.puts("Welcome to the Toy Robot simulator!")
+   IO.puts("Welcome to MEGA's Twitter Simulator!")
    print_help_message()
    receive_command()
  end
@@ -9,6 +9,8 @@ defmodule Proj4.Engine do
  @commands %{
    "quit" => "Exits twitter simulator",
    "register" => "Registers a twitter user",
+   "reteet" => "Send a tweet from someone you follow to your followers",
+   "tweet" => "Send out a tweet to your followers",
    "tweets" => "See all the tweets beloning to a user"
  }
 
@@ -23,23 +25,23 @@ defmodule Proj4.Engine do
    |> execute_command
  end
 
- defp execute_command("quit") do
-   IO.puts "Exiting twitter!"
- end
+ defp execute_command("quit"), do: IO.puts "Exiting twitter!"
 
- defp execute_command(command) do
-   case command do
-     "register" -> username = IO.gets("\nEnter New Username> ") |> String.trim
-                   Proj4.Supervisor.register_user(username)
-                   IO.puts "User #{username} has been registered successfully"
-     "tweets" -> name = IO.gets("\nEnter New Username> ")
-                 Proj4.Node.get_tweets(name)
-     _ -> print_help_message()
-          IO.puts("\nInvalid command. I don't know what to do.")
-   end
-
+ defp execute_command("register") do
+   username = IO.gets("\nEnter New Username> ") |> String.trim
+   Proj4.Supervisor.register_user(username)
+   IO.puts "User #{username} has been registered successfully"
    receive_command()
  end
+
+ defp execute_command("retweet") do
+   # IO.gets("\nEnter New Username> ") |> String.trim
+   # Proj4.Supervisor.register_user(username)
+   # IO.puts "User #{username} has been registered successfully"
+   receive_command()
+ end
+
+ defp execute_command(_invalid_command), do: print_help_message()
 
  defp print_help_message do
    IO.puts("\nThe simulator supports following commands:\n")
