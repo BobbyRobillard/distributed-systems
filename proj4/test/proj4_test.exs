@@ -17,7 +17,7 @@ defmodule Proj4Test do
     Enum.reduce(
       1..10,
       [],
-      fn id, acc -> acc ++ [Proj4.Node.start_link(Integer.to_string(id))] end
+      fn id, acc -> acc ++ [Proj4.Supervisor.register_user(Integer.to_string(id))] end
     )
   end
 

@@ -2,16 +2,9 @@
 Proj4.Registry.start_link
 Proj4.Supervisor.start_link
 
-# nodes = Enum.reduce(
-#   ,
-#   [],
-#   fn id, nodes ->  end
-# )
-
-
-Proj4.Supervisor.start_node("therealdonaldtrump")
-Proj4.Supervisor.start_node("obama")
-Proj4.Supervisor.start_node("hillary")
+Proj4.Supervisor.register_user("therealdonaldtrump")
+Proj4.Supervisor.register_user("obama")
+Proj4.Supervisor.register_user("hillary")
 
 Proj4.Node.follow_user("therealdonaldtrump", "obama")
 
@@ -33,5 +26,4 @@ Proj4.Node.publish_tweet(
   }
 )
 
-Proj4.Node.query_tweets("therealdonaldtrump", "trump")
-|> Enum.each(fn tweet -> IO.puts tweet[:content] end)
+Proj4.Engine.main()
