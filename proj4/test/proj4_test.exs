@@ -134,7 +134,13 @@ defmodule Proj4Test do
 
   # ----------------------------------------------------------------------
   test "Register User Functionality" do
-    start_up()
+    Proj4.Registry.start_link()
+    supervisor_pid = Proj4.Supervisor.start_link()
+    |> elem(1)
+
+    Proj4.Engine.execute_command("register")
+
+    assert 1 == Supervisor.count_children(supervisor_pid)[:active]
   end
 
 end
