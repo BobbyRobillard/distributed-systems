@@ -13,6 +13,8 @@ defmodule Proj4.Node do
 
   def start_link(username), do: GenServer.start_link(__MODULE__, [username], name: via_tuple(username))
 
+  def set_status(username, status), do: gen_cast(username, {:set_status, status})
+
   def publish_tweet(username, tweet), do: gen_cast(username, {:publish_tweet, tweet})
 
   def receive_tweet(username, tweet), do: gen_cast(username, {:receive_tweet, tweet})
@@ -44,10 +46,19 @@ defmodule Proj4.Node do
     following = :ets.new(:following, [:set, :private])
     {:ok, %{
       username: username,
+      last_active: 0,
       tweets: tweets,
       followers: followers,
       following: following
     }}
+  end
+
+  def handle_cast({:set_status, status}, state) do
+    last_active = case status do
+       :online -> 0
+       :offline -> System.system_time(:second)
+    end
+    {:noreply, Map.put(state, :last_active, last_active)}
   end
 
   @impl GenServer
@@ -62,7 +73,11 @@ defmodule Proj4.Node do
 
   @impl GenServer
   def handle_cast({:receive_tweet, tweet}, state) do
-    IO.puts "#{state[:username]} received tweet: #{tweet[:content]}"
+    if state[:last_active] == 0 do
+      IO.puts "#{state[:username]} received tweet: #{tweet[:content]}"
+    else
+      IO.puts "#{state[:username]} received tweet: #{tweet[:content]}, but is offline."
+    end
     {:noreply, state}
   end
 

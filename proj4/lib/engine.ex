@@ -17,11 +17,32 @@ defmodule Proj4.Engine do
     end
   end
 
-  def execute(["quit"]), do: {:quit}
+  def execute(["help"]) do
+    {:ok, [
+            "help: View available commands.",
+            "register <username>: Registers a Twitter user.",
+            "logon <username>: Sets status as online.",
+            "logoff <username>: Sets status as offline.",
+            "tweet <username> <message>: Tweets a message.",
+            "tweets <username>: View a users tweets.",
+            "quit: Exits program.",
+          ] |> Enum.join("\n")
+    }
+  end
 
   def execute(["register", username]) do
     Proj4.Supervisor.register_user(username)
     {:ok, "User #{username} registered successfully."}
+  end
+
+  def execute(["logon", username]) do
+    Proj4.Node.set_status(username, :online)
+    {:ok, "User #{username} has logged on."}
+  end
+
+  def execute(["logoff", username]) do
+    Proj4.Node.set_status(username, :offline)
+    {:ok, "User #{username} has logged off."}
   end
 
   def execute(["tweet", _message]) do
@@ -32,16 +53,7 @@ defmodule Proj4.Engine do
     {:error, "Command 'tweets' not implemented."}
   end
 
-  def execute(["help"]) do
-    {:ok, [
-            "quit: Exits program.",
-            "register <username>: Registers a Twitter user.",
-            "tweet <message>: Tweets a message.",
-            "tweets <username>: View a users tweets.",
-            "help: View available commands."
-          ] |> Enum.join("\n")
-    }
-  end
+  def execute(["quit"]), do: {:quit}
 
   def execute(_), do: {:error, "Invalid command (run 'help' for commands)."}
 
