@@ -1,21 +1,19 @@
-defmodule Proj4Test do
+defmodule NodeTest do
   use ExUnit.Case
+  @moduletag :capture_log
 
   # ----------------------------------------------------------------------
   # Helper functions for test functionality
   # ----------------------------------------------------------------------
 
   setup do
-    %{
-      registry: Proj4.Registry.start_link(),
-      supervisor: Proj4.Supervisor.start_link()
-    }
-  end
-
-  # Make sure the startup result of all supervisors/registrys is :ok.
-  test "setup", context do
-    assert {:ok, _} = context[:registry]
-    assert {:ok, _} = context[:supervisor]
+    # Restart the application to force close any GenServer state
+    Application.stop(:proj4)
+    :ok = Application.start(:proj4)
+    # Starts supervisors under ExUnit to manage proper teardown
+    start_supervised!(Proj4.Registry)
+    start_supervised!(Proj4.Supervisor)
+    []
   end
 
   defp init(env) do
@@ -25,7 +23,7 @@ defmodule Proj4Test do
     end)
   end
 
-  test "init", context do
+  test "init" do
     init(%{a: [:b], b: []})
     assert 1 == Proj4.Node.get_following(:a) |> Enum.count
     assert 0 == Proj4.Node.get_followers(:a) |> Enum.count
@@ -68,7 +66,7 @@ defmodule Proj4Test do
     Proj4.Node.publish_tweet(:a, tweet)
     tweets = Proj4.Node.get_tweets(:a)
     assert 1 == Enum.count(tweets)
-    assert tweet == hd(tweets) |> elem(0)
+    assert tweet == hd(tweets)
   end
 
   # ----------------------------------------------------------------------

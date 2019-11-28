@@ -116,33 +116,34 @@ defmodule Proj4.Node do
   end
 
   @impl GenServer
-  def handle_call(:get_tweets, _from, state), do: {:reply, :ets.tab2list(state[:tweets]), state}
+  def handle_call(:get_tweets, _from, state), do: {:reply, ets_list(state[:tweets]), state}
 
   @impl GenServer
-  def handle_call(:get_following, _from, state), do: {:reply, :ets.tab2list(state[:following]), state}
+  def handle_call(:get_following, _from, state), do: {:reply, ets_list(state[:following]), state}
 
   @impl GenServer
-  def handle_call(:get_followers, _from, state), do: {:reply, :ets.tab2list(state[:followers]), state}
+  def handle_call(:get_followers, _from, state), do: {:reply, ets_list(state[:followers]), state}
 
   @impl GenServer
   def handle_call({:query_tweets, query}, _from, state) do
     query = String.downcase(query)
     self = elem(handle_call({:query_tweets_impl, query}, nil, state), 1) #query self
-    followers = :ets.tab2list(state[:following])
-      |> Enum.flat_map(fn user -> gen_call(elem(user, 0), {:query_tweets_impl, query}) end) #query followers
+    followers = ets_list(state[:following]) |> Enum.flat_map(fn user ->
+      gen_call(user, {:query_tweets_impl, query}) #query followers for tweets
+    end)
     {:reply, Enum.concat(self, followers), state}
   end
 
   @impl GenServer
   def handle_call({:query_tweets_impl, query}, _from, state) do
-    results = :ets.tab2list(state[:tweets])
-      |> Enum.map(fn entry -> elem(entry, 0) end) #Extract tweet from tuple entry
-      |> Enum.filter(fn tweet ->
-        Enum.any?(tweet[:mentions], fn m -> String.downcase(m) == query end) #same as mention
-        or Enum.any?(tweet[:hashtags], fn h -> String.downcase(h) == query end) #same as tag
-        or String.downcase(tweet[:content]) =~ query #contains query
-      end)
+    results = ets_list(state[:tweets]) |> Enum.filter(fn tweet ->
+      Enum.any?(tweet[:mentions], fn m -> String.downcase(m) == query end) #same as mention
+      or Enum.any?(tweet[:hashtags], fn h -> String.downcase(h) == query end) #same as tag
+      or String.downcase(tweet[:content]) =~ query #contains query
+    end)
     {:reply, results, state}
   end
+
+  defp ets_list(table), do: :ets.tab2list(table) |> Enum.map(fn entry -> elem(entry, 0) end)
 
 end
