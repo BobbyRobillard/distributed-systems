@@ -29,7 +29,11 @@ defmodule Proj4.Node do
     gen_cast(user, {:remove_follower, username})
   end
 
+  def get_status(username), do: gen_call(username, :get_status)
+
   def get_tweets(username), do: gen_call(username, :get_tweets)
+
+  def get_following(username), do: gen_call(username, :get_following)
 
   def get_followers(username), do: gen_call(username, :get_followers)
 
@@ -95,8 +99,7 @@ defmodule Proj4.Node do
 
   @impl GenServer
   def handle_cast({:unfollow_user, user}, state) do
-    :ets.delete(state[:following], {user})
-    gen_cast(via_tuple(user), {:remove_follower, state[:username]})
+    :ets.delete(state[:following], user)
     {:noreply, state}
   end
 
@@ -107,7 +110,16 @@ defmodule Proj4.Node do
   end
 
   @impl GenServer
+  def handle_call(:get_status, _from, state) do
+    status = if state[:last_active] == 0 do :online else :offline end
+    {:reply, status, state}
+  end
+
+  @impl GenServer
   def handle_call(:get_tweets, _from, state), do: {:reply, :ets.tab2list(state[:tweets]), state}
+
+  @impl GenServer
+  def handle_call(:get_following, _from, state), do: {:reply, :ets.tab2list(state[:following]), state}
 
   @impl GenServer
   def handle_call(:get_followers, _from, state), do: {:reply, :ets.tab2list(state[:followers]), state}

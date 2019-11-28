@@ -1,51 +1,49 @@
 defmodule Proj4Test do
   use ExUnit.Case
-  import ExUnit.CaptureIO
 
   # ----------------------------------------------------------------------
   # Helper functions for test functionality
   # ----------------------------------------------------------------------
 
-  def start_up do
-      [
-        Proj4.Registry.start_link(),
-        Proj4.Supervisor.start_link()
-      ]
+  setup do
+    %{
+      registry: Proj4.Registry.start_link(),
+      supervisor: Proj4.Supervisor.start_link()
+    }
   end
-
-  def add_nodes do
-    Enum.reduce(
-      1..10,
-      [],
-      fn id, acc -> acc ++ [Proj4.Supervisor.register_user(Integer.to_string(id))] end
-    )
-  end
-
-  # ----------------------------------------------------------------------
 
   # Make sure the startup result of all supervisors/registrys is :ok.
-  test "program startup" do
-    start_up()
-    |> Enum.each(fn result ->
-          result =
-          Tuple.to_list(result)
-          |> Enum.at(0)
-
-          assert result == :ok
-       end)
+  test "setup", context do
+    assert {:ok, _} = context[:registry]
+    assert {:ok, _} = context[:supervisor]
   end
 
-  # ----------------------------------------------------------------------
+  defp init(env) do
+    Enum.each(env, fn {user, _} -> Proj4.Supervisor.register_user(user) end)
+    Enum.each(env, fn {user, followers} ->
+      Enum.each(followers, fn f -> Proj4.Node.follow_user(user, f) end)
+    end)
+  end
 
-  # Make sure nodes can be added to the network.
-  test "Register User Functionality" do
-    Proj4.Registry.start_link()
-    supervisor_pid = Proj4.Supervisor.start_link()
-    |> elem(1)
+  test "init", context do
+    init(%{a: [:b], b: []})
+    assert 1 == Proj4.Node.get_following(:a) |> Enum.count
+    assert 0 == Proj4.Node.get_followers(:a) |> Enum.count
+    assert 0 == Proj4.Node.get_following(:b) |> Enum.count
+    assert 1 == Proj4.Node.get_followers(:b) |> Enum.count
+  end
 
-    add_nodes()
+  test "status" do
+    init(%{a: []})
+    assert :online == Proj4.Node.get_status(:a)
 
-    assert 10 == Supervisor.count_children(supervisor_pid)[:active]
+    # Change status to offline
+    Proj4.Node.set_status(:a, :offline)
+    assert :offline == Proj4.Node.get_status(:a)
+
+    # Change status to online
+    Proj4.Node.set_status(:a, :online)
+    assert :online == Proj4.Node.get_status(:a)
   end
 
   # ----------------------------------------------------------------------
@@ -57,79 +55,70 @@ defmodule Proj4Test do
 
   # ----------------------------------------------------------------------
 
-  test "Publish Tweet Functionality" do
-    start_up()
-    add_nodes()
+  test "publish" do
+    init(%{a: [:b], b: []})
+    assert 0 == Proj4.Node.get_tweets(:a) |> Enum.count
 
-    publishing_node_id = "1"
-
+    # Publish and retrieve tweet
     tweet = %{
-      hashtags: ["trump", "america"],
-      mentions: ["obama"],
-      content: "abc123"
+      content: "Trump for president!",
+      mentions: ["trump"],
+      hashtags: ["maga", "2020"]
     }
-
-    Proj4.Node.publish_tweet(publishing_node_id, tweet)
-
-    num_tweets = Proj4.Node.get_tweets(publishing_node_id)
-    |> Enum.count
-
-    # Make sure publisher properly stored tweets,
-    assert num_tweets == 1
+    Proj4.Node.publish_tweet(:a, tweet)
+    tweets = Proj4.Node.get_tweets(:a)
+    assert 1 == Enum.count(tweets)
+    assert tweet == hd(tweets) |> elem(0)
   end
 
   # ----------------------------------------------------------------------
 
-  test "Follow a User Functionality" do
-    start_up()
-    add_nodes()
+  test "follow" do
+    init(%{a: [], b: [], c: []})
+    assert 0 == Proj4.Node.get_following(:a) |> Enum.count
+    assert 0 == Proj4.Node.get_followers(:a) |> Enum.count
 
     # Test Adding A Follower
-    Proj4.Node.follow_user("2", "1")
-    assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
+    Proj4.Node.follow_user(:a, :b)
+    assert 1 == Proj4.Node.get_following(:a) |> Enum.count
+    assert 0 == Proj4.Node.get_followers(:a) |> Enum.count
+    assert 0 == Proj4.Node.get_following(:b) |> Enum.count
+    assert 1 == Proj4.Node.get_followers(:b) |> Enum.count
 
     # Make sure followers can't be added twice
-    Proj4.Node.follow_user("2", "1")
-    assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
+    Proj4.Node.follow_user(:a, :b)
+    assert 1 == Proj4.Node.get_following(:a) |> Enum.count
 
     # Add another follower
-    Proj4.Node.follow_user("3", "1")
-    assert (Proj4.Node.get_followers("1") |> Enum.count()) == 2
+    Proj4.Node.follow_user(:a, :c)
+    assert 2 == Proj4.Node.get_following(:a) |> Enum.count
+    assert 1 == Proj4.Node.get_followers(:c) |> Enum.count
 
     # Test removing a follower
-    Proj4.Node.unfollow_user("2", "1")
-    assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
+    Proj4.Node.unfollow_user(:a, :c)
+    assert 1 == Proj4.Node.get_following(:a) |> Enum.count
+    assert 0 == Proj4.Node.get_followers(:c) |> Enum.count
 
     # Remove a follower which isn't following
-    Proj4.Node.unfollow_user("2", "1")
-    assert (Proj4.Node.get_followers("1") |> Enum.count()) == 1
+    Proj4.Node.unfollow_user(:a, :c)
+    assert 1 == Proj4.Node.get_following(:a) |> Enum.count
+    assert 0 == Proj4.Node.get_followers(:c) |> Enum.count
   end
 
   # ----------------------------------------------------------------------
 
-  test "Query Tweets Functionality" do
-    start_up()
-    add_nodes()
-
-    # Follow Users
-    Proj4.Node.follow_user("2", "1")
-    Proj4.Node.follow_user("3", "1")
-    Proj4.Node.follow_user("3", "2")
-
-
+  test "query" do
+    init(%{a: [], b: [:a]})
     tweet = %{
-      hashtags: ["trump", "america"],
-      mentions: ["obama"],
-      content: "Trump for president!"
+      content: "Trump for president!",
+      mentions: ["Trump"],
+      hashtags: ["MAGA", "2020"]
     }
-
-    Proj4.Node.publish_tweet("1", tweet)
-    Proj4.Node.publish_tweet("2", tweet)
-
-    assert (Proj4.Node.query_tweets("1", "trump") |> Enum.count()) == 1
-
-    assert (Proj4.Node.query_tweets("1", "hillary") |> Enum.count()) == 0
-
+    Proj4.Node.publish_tweet(:a, tweet)
+    assert 1 == Proj4.Node.query_tweets(:a, "trump") |> Enum.count()
+    assert 1 == Proj4.Node.query_tweets(:b, "trump") |> Enum.count()
+    assert 1 == Proj4.Node.query_tweets(:a, "maga") |> Enum.count()
+    assert 0 == Proj4.Node.query_tweets(:a, "hillary") |> Enum.count()
   end
 
 end
