@@ -1,10 +1,13 @@
 defmodule Proj4.Engine do
 
-  def main() do
+  def main(args \\ []) do
     IO.puts("Welcome to MEGA's Twitter Simulator!")
     Proj4.Registry.start_link([])
     Proj4.Supervisor.start_link([])
     Agent.start_link(fn -> nil end, name: :active_user)
+    if !Enum.empty?(args) do
+      IO.puts execute(["test", Enum.join(args, " ")]) |> elem(1)
+    end
     process()
   end
 
@@ -35,6 +38,7 @@ defmodule Proj4.Engine do
             "tweets: View a user's tweets.",
             "query <query>: Query a user's tweets",
             "quit: Exits program.",
+            "test: Run performance tests",
           ] |> Enum.join("\n")
     }
   end
@@ -114,8 +118,34 @@ defmodule Proj4.Engine do
 
   def execute(["quit"]), do: {:quit}
 
+  def execute(["test", args]) do
+    [num_user, num_msg] = String.split(args) |> Enum.map(&String.to_integer/1)
+    res = time(fn ->
+      Enum.each(1..num_user, fn id ->
+        Proj4.Supervisor.register_user(id)
+      end)
+      Enum.each(1..5 * num_user, fn id ->
+        Proj4.Node.follow_user(ceil(id / 2), :rand.uniform(num_user))
+      end)
+      Enum.each(1..num_msg, fn _ ->
+        length = :rand.uniform(64)
+        Proj4.Node.publish_tweet(:rand.uniform(num_user), %{
+          content: :crypto.strong_rand_bytes(length) |> Base.url_encode64 |> binary_part(0, length)
+        })
+      end)
+    end)
+    {:ok, "Test took #{res} seconds."}
+  end
+
   def execute(_), do: {:error, "Invalid command (run 'help' for commands)."}
 
   defp active_user(), do: Agent.get(:active_user, fn u -> u end)
+
+  defp time(function) do
+    function
+    |> :timer.tc
+    |> elem(0)
+    |> Kernel./(1_000_000)
+  end
 
 end
