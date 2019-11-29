@@ -1,1 +1,1 @@
-Proj4.Engine.main()
+Proj4.Engine.main(System.argv)
