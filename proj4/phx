@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cd ~
+mix local.hex
+mix archive.install hex phx_new 1.4.11
+apt-get install nodejs
