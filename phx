@@ -1,6 +1,7 @@
 #!/bin/bash
 
-apt-get install -y nodejs apt install -y npm
+apt-get install -y nodejs
+apt install -y npm
 
 # Postgres Install
 apt-get install -y postgresql postgresql-contrib
@@ -17,7 +18,8 @@ mix archive.install hex phx_new 1.4.11
 cd /vagrant/proj42
 mix deps.get
 mix deps.compile
-cd assets && npm install && node node_modules/webpack/bin/webpack.js --mode development
+cd assets && npm install
+node node_modules/webpack/bin/webpack.js --mode development
 
 cd /vagrant/proj42
 mix ecto.create
