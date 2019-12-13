@@ -11,6 +11,11 @@ defmodule Proj42.Impl.Registry do
   end
 
 
+  def get_all() do
+    GenServer.call(:registry, {:get_all})
+  end
+
+
   def whereis_name(worker_name) do
     GenServer.call(:registry, {:whereis_name, worker_name})
   end
@@ -42,7 +47,6 @@ defmodule Proj42.Impl.Registry do
     end
   end
 
-
   ##############################################################################
   #                               SERVER                                       #
   ##############################################################################
@@ -52,6 +56,11 @@ defmodule Proj42.Impl.Registry do
     # We will use a simple Map to store our processes in
     # the format %{"room name" => pid}
     {:ok, Map.new}
+  end
+
+
+  def handle_call({:get_all}, _from, state) do
+    {:reply, Map.keys(state)}
   end
 
 

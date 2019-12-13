@@ -37,7 +37,7 @@ defmodule Proj42.Impl.Node do
 
   def get_followers(username), do: gen_call(username, :get_followers)
 
-  def query_tweets(username, query), do: gen_call(username, {:query_tweets, query})
+  def query_tweets(username, query, neighbors), do: gen_call(username, {:query_tweets, query, neighbors})
 
   # ----------------------------------------------------------------------------
   # Internal API
@@ -125,12 +125,12 @@ defmodule Proj42.Impl.Node do
   def handle_call(:get_followers, _from, state), do: {:reply, ets_list(state[:followers]), state}
 
   @impl GenServer
-  def handle_call({:query_tweets, query}, _from, state) do
+  def handle_call({:query_tweets, query, neighbors}, _from, state) do
     query = String.downcase(query)
     self = elem(handle_call({:query_tweets_impl, query}, nil, state), 1) #query self
-    followers = ets_list(state[:following]) |> Enum.flat_map(fn user ->
+    followers = if neighbors do [] else ets_list(state[:following]) |> Enum.flat_map(fn user ->
       gen_call(user, {:query_tweets_impl, query}) #query followers for tweets
-    end)
+    end) end
     {:reply, Enum.concat(self, followers), state}
   end
 
