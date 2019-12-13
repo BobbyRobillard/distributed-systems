@@ -18,6 +18,7 @@ defmodule Proj42Web.Router do
 
     get "/", PageController, :index
     get "/publish_tweet", TweetController, :publish
+    get "/login", LoginController, :login
   end
 
   # Other scopes may use custom stacks.

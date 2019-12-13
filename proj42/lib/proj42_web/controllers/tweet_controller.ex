@@ -3,7 +3,6 @@ defmodule Proj42Web.TweetController do
 
   def publish(conn, _params) do
     render(conn, "publish.html")
-
   end
 
   def new(conn, _params) do
