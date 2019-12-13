@@ -1,40 +1,34 @@
-# #!/bin/bash
-#
-# apt-get install -y nodejs
-# apt install -y npm
-#
-# # Postgres Install
-# apt-get install -y postgresql postgresql-contrib
-#
-# # Reset password of POSTGRES default user for ecto install.
-# sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
-# service postgresql restart
-#
-# # Phoenix Install
-# mix local.hex
-# mix archive.install hex phx_new 1.4.11
-#
-# # Install depedancies for proj4.2
-# cd /vagrant/proj42
-# mix deps.get
-# mix deps.compile
-# cd assets && npm install && node node_modules/webpack/bin/webpack.js --mode development
-# cd /vagrant/proj42
-# mix ecto.create
+#!/bin/bash
 
-echo "**************************************************"
-echo "**************************************************"
-echo "IGNORE ANY AND ALL ERRORS. NODE && NPM ARE GARBAGE."
-echo "**************************************************"
-echo "**************************************************"
-echo ""
-echo ""
-echo "-----------------------------------"
-echo "Everything is set. Remember to 'cd proj42'."
-echo ""
-echo "Run 'mix phx.server' to start the web server."
-echo ""
-echo "**NOTE:** You must restart the server anytime you update your code."
-echo "-----------------------------------"
-echo ""
-echo ""
+apt-get install -y nodejs apt install -y npm
+
+# Postgres Install
+apt-get install -y postgresql postgresql-contrib
+
+# Reset password of POSTGRES default user for ecto install.
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+service postgresql restart
+
+# Phoenix Install
+mix local.hex
+mix archive.install hex phx_new 1.4.11
+
+# Install depedancies for proj4.2
+cd /vagrant/proj42
+mix deps.get
+mix deps.compile
+cd assets && npm install && node node_modules/webpack/bin/webpack.js --mode development
+
+cd /vagrant/proj42
+mix ecto.create
+
+echo "**************************************************" echo
+"**************************************************" echo "IGNORE ANY
+AND ALL ERRORS. NODE && NPM ARE GARBAGE." echo
+"**************************************************" echo
+"**************************************************" echo "" echo ""
+echo "-----------------------------------" echo "Everything is set.
+Remember to 'cd proj42'." echo "" echo "Run 'mix phx.server' to start
+the web server." echo "" echo "**NOTE:** You must restart the server
+anytime you update your code." echo
+"-----------------------------------" echo "" echo ""
