@@ -16,9 +16,8 @@ defmodule Proj42Web.Router do
   scope "/", Proj42Web do
     pipe_through :browser
 
-    get "/", PageController, :index
-    get "/publish_tweet", TweetController, :publish
-    get "/login", LoginController, :login
+    get "/", HomeController, :index
+    get "/login", LoginController, :index
   end
 
   # Other scopes may use custom stacks.

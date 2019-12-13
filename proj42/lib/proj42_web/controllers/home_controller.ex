@@ -1,4 +1,4 @@
-defmodule Proj42Web.PageController do
+defmodule Proj42Web.HomeController do
   use Proj42Web, :controller
 
   def index(conn, _params) do

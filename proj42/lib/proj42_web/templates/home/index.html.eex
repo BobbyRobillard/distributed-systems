@@ -1,3 +1,8 @@
+<div class="jumbotron text-center">
+  <h1>Welcome to Twitter, but Better</h1>
+  <img src="<%= Routes.static_path(@conn, "/images/bitter.jpg") %>" alt="logo" style="width:300px;height:300px;border-radius:50%;border:2px dashed black;"/>
+</div>
+
 <div class="container">
   <div class="row">
     <div class="col-sm-8">
