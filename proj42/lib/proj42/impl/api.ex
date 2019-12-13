@@ -51,7 +51,7 @@ defmodule Proj42.Impl.Api do
                 |> Enum.filter(fn s -> String.starts_with?(s, "@") end)
                 |> Enum.map(fn s -> String.slice(s, 1..0) end),
       hashtags: words
-                |> Enum.filter(fn s -> String.starts_with?(s, "@") end)
+                |> Enum.filter(fn s -> String.starts_with?(s, "#") end)
                 |> Enum.map(fn s -> String.slice(s, 1..0) end)
     }
     Proj42.Impl.Node.publish_tweet(username, tweet)
