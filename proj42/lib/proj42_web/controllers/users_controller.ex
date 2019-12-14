@@ -3,9 +3,11 @@ defmodule Proj42Web.UsersController do
 
   def index(conn, params) do
     if !Enum.empty?(params) do
+      {:ok, tweets} = Proj42.Impl.Api.tweets(params["username"])
       {:ok, following} = Proj42.Impl.Api.following(params["username"])
       {:ok, followers} = Proj42.Impl.Api.followers(params["username"])
       conn
+        |> assign(:tweets, tweets)
         |> assign(:following, following)
         |> assign(:followers, followers)
         |> render("user.html")

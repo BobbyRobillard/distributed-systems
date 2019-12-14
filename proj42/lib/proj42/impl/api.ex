@@ -46,6 +46,7 @@ defmodule Proj42.Impl.Api do
   def tweet(username, message) do #{:ok}
     words = String.split(message, " ")
     tweet = %{
+      author: username,
       content: message,
       mentions: words
                 |> Enum.filter(fn s -> String.starts_with?(s, "@") end)

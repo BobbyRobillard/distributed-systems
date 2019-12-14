@@ -5,6 +5,6 @@
       <label for="username"><b>Username</b></label>
       <input type="text" placeholder="Enter Username" name="username" required>
     </div>
-    <button type="submit">Login</button>
+    <button type="submit">Follow</button>
   </form>
 </div>

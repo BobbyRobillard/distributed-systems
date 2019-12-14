@@ -1,4 +1,13 @@
 <div class="col-sm-4">
+    <h2>Tweets</h2>
+    <form action="/tweet" method="get">
+      <button type="submit">New</button>
+    </form>
+    <%= for key <- @conn.assigns[:tweets] do %>
+        <p><%= key[:author]%>: <%= key[:content] %></p>
+    <% end %>
+</div>
+<div class="col-sm-4">
     <h2>Following</h2>
     <form action="/follow" method="get">
       <button type="submit">Add</button>

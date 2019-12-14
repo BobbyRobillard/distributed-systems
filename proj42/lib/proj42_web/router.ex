@@ -23,6 +23,7 @@ defmodule Proj42Web.Router do
     get "/users/:username", UsersController, :index
     get "/follow", FollowController, :index
     get "/unfollow", UnfollowController, :index
+    get "/tweet", TweetController, :index
   end
 
   # Other scopes may use custom stacks.
