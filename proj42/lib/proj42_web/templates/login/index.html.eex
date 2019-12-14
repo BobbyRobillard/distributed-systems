@@ -12,6 +12,6 @@
     <button type="submit">Login</button>
   </form>
   <form action="/register" method="get">
-   <button type="submit">Register</button>
+   <button onClick="window.location.href = 'http://localhost:4000/register';" type="submit">Register</button>
   </form>
 </div>
