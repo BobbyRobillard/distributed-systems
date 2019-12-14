@@ -5,7 +5,7 @@
 
 <div class="container">
   <div class="row">
-    <div class="col-sm-8">
+    <div class="col">
       <h3>Live Feed</h3>
       <ul>
         <li>
@@ -15,21 +15,6 @@
           <p>So instead this is as empty as your bank account...</p>
         </li>
       </ul>
-    </div>
-    <div class="col-sm-4" style="border-left: 1px solid #eee;">
-      <h3>Find People / Them Stats</h3>
-      <u>Search for someone: </u> <br><br>
-      <form action="/action_page.php">
-        <div class="form-group">
-          <input type="text" class="form-control" id="search" placeholder="Enter username" name="search">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-      <hr>
-      <u>Followers: </u>103
-      <p>These people will see your posts/reposts in their feeds.</p>
-      <u>Following: </u>108
-      <p>You will see posts/reposts by these people in your feed.</p>
     </div>
   </div>
 </div>
