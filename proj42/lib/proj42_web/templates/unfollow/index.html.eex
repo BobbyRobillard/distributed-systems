@@ -1,0 +1,10 @@
+<div class="jumbotron text-center">
+  <h2>Unfollow</h2>
+  <form action="/unfollow" method="get">
+    <div>
+      <label for="username"><b>Username</b></label>
+      <input type="text" placeholder="Enter Username" name="username" required>
+    </div>
+    <button type="submit">Login</button>
+  </form>
+</div>

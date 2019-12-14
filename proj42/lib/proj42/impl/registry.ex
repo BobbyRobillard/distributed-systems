@@ -60,7 +60,7 @@ defmodule Proj42.Impl.Registry do
 
 
   def handle_call({:get_all}, _from, state) do
-    {:reply, Map.keys(state)}
+    {:reply, Enum.map(Map.keys(state), fn k -> elem(k, 1) end), state}
   end
 
 

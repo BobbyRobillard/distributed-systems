@@ -21,6 +21,8 @@ defmodule Proj42Web.Router do
     get "/register", RegisterController, :index
     get "/users", UsersController, :index
     get "/users/:username", UsersController, :index
+    get "/follow", FollowController, :index
+    get "/unfollow", UnfollowController, :index
   end
 
   # Other scopes may use custom stacks.

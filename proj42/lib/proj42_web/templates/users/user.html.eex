@@ -1,5 +1,11 @@
 <div class="col-sm-4">
     <h2>Following</h2>
+    <form action="/follow" method="get">
+      <button type="submit">Add</button>
+    </form>
+    <form action="/unfollow" method="get">
+      <button type="submit">Remove</button>
+    </form>
     <%= for key <- @conn.assigns[:following] do %>
         <p><%= key %></p>
     <% end %>
