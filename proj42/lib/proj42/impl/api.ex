@@ -4,14 +4,14 @@ defmodule Proj42.Impl.Api do
     {:ok, Proj42.Impl.Registry.get_all()}
   end
 
-  def register(username) do #{:ok}
+  def register(username, _password) do #{:ok}
     case Proj42.Impl.Supervisor.register_user(username) do
       {:ok, _} -> {:ok}
       error -> error
     end
   end
 
-  def login(username, password) do #{:ok}
+  def login(username, _password) do #{:ok}
     Proj42.Impl.Node.set_status(username, :online)
     {:ok}
   end

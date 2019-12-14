@@ -1,6 +1,6 @@
 <div class="jumbotron text-center">
-  <h2>Login</h2>
-  <form action="/login" method="get">
+  <h2>Register</h2>
+  <form action="/register" method="get">
     <div>
       <label for="username"><b>Username</b></label>
       <input type="text" placeholder="Enter Username" name="username" required>
@@ -9,9 +9,6 @@
       <label for="password"><b>Password</b></label>
       <input type="password" placeholder="Enter Password" name="password" required>
     </div>
-    <button type="submit">Login</button>
-  </form>
-  <form action="/register" method="get">
-   <button type="submit">Register</button>
+    <button type="submit">Register</button>
   </form>
 </div>
