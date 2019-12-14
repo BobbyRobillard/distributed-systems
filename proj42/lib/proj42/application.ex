@@ -16,14 +16,14 @@ defmodule Proj42.Application do
       # {Proj42.Worker, arg},
     ]
 
+    Proj42.Impl.Registry.start_link([])
+    Proj42.Impl.Supervisor.start_link([])
+    Agent.start_link(fn -> nil end, name: :active_user)
+
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Proj42.Supervisor]
     Supervisor.start_link(children, opts)
-
-    Proj42.Impl.Registry.start_link([])
-    Proj42.Impl.Supervisor.start_link([])
-    Agent.start_link(fn -> nil end, name: :active_user)
   end
 
   # Tell Phoenix to update the endpoint configuration

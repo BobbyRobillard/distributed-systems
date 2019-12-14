@@ -1,0 +1,12 @@
+<div class="col-sm-4">
+    <h2>Following</h2>
+    <%= for key <- @conn.assigns[:following] do %>
+        <p><%= key %></p>
+    <% end %>
+</div>
+<div class="col-sm-4">
+    <h2>Followers</h2>
+    <%= for key <- @conn.assigns[:followers] do %>
+        <p><%= key %></p>
+    <% end %>
+</div>

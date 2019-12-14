@@ -1,0 +1,6 @@
+<div>
+    <h2>Users</h2>
+    <%= for key <- @conn.assigns[:users] do %>
+        <p><%= key %></p>
+    <% end %>
+</div>

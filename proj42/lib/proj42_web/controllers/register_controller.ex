@@ -4,7 +4,8 @@ defmodule Proj42Web.RegisterController do
   def index(conn, params) do
     if !Enum.empty?(params) do
       {:ok} = Proj42.Impl.Api.register(params["username"], params["password"])
-      redirect(conn, to: "/")
+      Agent.update(:active_user, fn _ -> params["username"] end)
+      redirect(conn, to: "/users/#{params["username"]}")
     else
       render(conn, "index.html")
     end
