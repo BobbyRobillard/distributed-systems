@@ -3,6 +3,9 @@
     <form action="/tweet" method="get">
       <button type="submit">New</button>
     </form>
+    <form action="/query" method="get">
+      <button type="submit">Query</button>
+    </form>
     <%= for key <- @conn.assigns[:tweets] do %>
         <p><%= key[:author]%>: <%= key[:content] %></p>
     <% end %>

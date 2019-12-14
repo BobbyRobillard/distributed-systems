@@ -1,0 +1,8 @@
+<div>
+    <h2>Query</h2>
+    <p><%= @conn.assigns[:query] %></p>
+    <h2>Results</h2>
+    <%= for key <- @conn.assigns[:tweets] do %>
+        <p><%= key[:author]%>: <%= key[:content] %></p>
+    <% end %>
+</div>

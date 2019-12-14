@@ -140,6 +140,7 @@ defmodule Proj42.Impl.Node do
       Enum.any?(tweet[:mentions], fn m -> String.downcase(m) == query end) #same as mention
       or Enum.any?(tweet[:hashtags], fn h -> String.downcase(h) == query end) #same as tag
       or String.downcase(tweet[:content]) =~ query #contains query
+      or String.downcase(tweet[:author]) == query
     end)
     {:reply, results, state}
   end
