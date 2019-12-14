@@ -17,6 +17,7 @@ defmodule Proj42Web.Router do
     pipe_through :browser
 
     get "/", HomeController, :index
+    get "/home", HomeController, :index
     get "/login", LoginController, :index
     get "/register", RegisterController, :index
     get "/users", UsersController, :index

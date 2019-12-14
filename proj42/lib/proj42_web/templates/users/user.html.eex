@@ -7,7 +7,7 @@
       <button type="submit">Query</button>
     </form>
     <%= for key <- @conn.assigns[:tweets] do %>
-        <p><%= key[:author]%>: <%= key[:content] %></p>
+        <p><%= key[:content] %></p>
     <% end %>
 </div>
 <div class="col-sm-4">

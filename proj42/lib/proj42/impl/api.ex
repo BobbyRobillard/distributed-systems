@@ -63,8 +63,12 @@ defmodule Proj42.Impl.Api do
     {:ok, Proj42.Impl.Node.get_tweets(username)}
   end
 
-  def query(username, query, neighbors \\ false) do #{:ok, tweets: list[tweet: map]}
+  def query(username, query, neighbors \\ true) do #{:ok, tweets: list[tweet: map]}
     {:ok, Proj42.Impl.Node.query_tweets(username, query, neighbors)}
+  end
+
+  def feed(username) do #{:ok, tweets: list[tweet: map]
+    {:ok, Proj42.Impl.Node.get_feed(username)}
   end
 
 end

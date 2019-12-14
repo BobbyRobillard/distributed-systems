@@ -31,6 +31,8 @@ defmodule Proj42.Impl.Node do
 
   def get_status(username), do: gen_call(username, :get_status)
 
+  def get_feed(username), do: gen_call(username, :get_feed)
+
   def get_tweets(username), do: gen_call(username, :get_tweets)
 
   def get_following(username), do: gen_call(username, :get_following)
@@ -48,12 +50,14 @@ defmodule Proj42.Impl.Node do
     tweets = :ets.new(:tweets, [:set, :private])
     followers = :ets.new(:followers, [:set, :private])
     following = :ets.new(:following, [:set, :private])
+    feed = :ets.new(:feed, [:set, :private])
     {:ok, %{
       username: username,
       last_active: 0,
       tweets: tweets,
       followers: followers,
-      following: following
+      following: following,
+      feed: feed
     }}
   end
 
@@ -70,17 +74,18 @@ defmodule Proj42.Impl.Node do
     # Send tweet to all our followers
     # TODO: Store tweet in our tweets only if it's not a re-tweet
     :ets.insert(state[:tweets], {tweet})
-    :ets.tab2list(state[:followers])
+    ets_list(state[:followers])
       |> Enum.each(fn f -> receive_tweet(f, tweet) end)
     {:noreply, state}
   end
 
   @impl GenServer
   def handle_cast({:receive_tweet, tweet}, state) do
+    :ets.insert(state[:feed], {tweet})
     if state[:last_active] == 0 do
-      IO.puts "#{state[:username]} received tweet: #{tweet[:content]}"
+      #IO.puts "#{state[:username]} received tweet: #{tweet[:content]}"
     else
-      IO.puts "#{state[:username]} received tweet: #{tweet[:content]}, but is offline."
+      #IO.puts "#{state[:username]} received tweet: #{tweet[:content]}, but is offline."
     end
     {:noreply, state}
   end
@@ -114,6 +119,9 @@ defmodule Proj42.Impl.Node do
     status = if state[:last_active] == 0 do :online else :offline end
     {:reply, status, state}
   end
+
+  @impl GenServer
+  def handle_call(:get_feed, _from, state), do: {:reply, ets_list(state[:feed]), state}
 
   @impl GenServer
   def handle_call(:get_tweets, _from, state), do: {:reply, ets_list(state[:tweets]), state}

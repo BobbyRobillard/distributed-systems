@@ -3,6 +3,7 @@ defmodule Proj42Web.TweetController do
 
   def index(conn, params) do
     if !Enum.empty?(params) do
+      IO.puts "tweet #{params["message"]}"
       user = Agent.get(:active_user, fn u -> u end)
       {:ok} = Proj42.Impl.Api.tweet(user, params["message"])
       redirect(conn, to: "/users/#{user}")

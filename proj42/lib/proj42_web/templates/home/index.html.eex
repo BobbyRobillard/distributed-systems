@@ -6,7 +6,8 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <h3>Live Feed</h3>
+      <h3>Feed</h3>
+      <%= if Enum.empty?(@conn.assigns[:tweets]) do %>
       <ul>
         <li>
           <p>If you were cool and had friends, you would see stuff about them here...</p>
@@ -15,6 +16,11 @@
           <p>So instead this is as empty as your bank account...</p>
         </li>
       </ul>
+      <% else %>
+        <%= for key <- @conn.assigns[:tweets] do %>
+          <p><%= key[:author]%>: <%= key[:content] %></p>
+        <% end %>
+      <% end %>
     </div>
   </div>
 </div>

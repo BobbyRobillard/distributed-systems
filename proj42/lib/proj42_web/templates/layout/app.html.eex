@@ -27,13 +27,16 @@
         <a class="nav-link" href="http://localhost:4000">Home</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="http://localhost:4000/tweet">Post Tweet</a>
+        <a class="nav-link" href="http://localhost:4000/tweet">Tweet</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="http://localhost:4000/users">Users</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="http://localhost:4000/login">Login -></a>
+        <a class="nav-link" href="http://localhost:4000/login">Login</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="http://localhost:4000/home?simulate=true">Simulate</a>
       </li>
     </ul>
   </nav>

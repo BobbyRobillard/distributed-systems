@@ -1,20 +1,15 @@
-# Proj42
+# Proj42 (4.2)
 
-To start your Phoenix server:
+This implements a Phoenix web app (CRUD style) to handle the different actions
+previously supported by the engine to demonstrate this system.
 
-  * Install dependencies with `mix deps.get`
-  * Create and migrate your database with `mix ecto.setup`
-  * Install Node.js dependencies with `cd assets && npm install`
-  * Start Phoenix endpoint with `mix phx.server`
+Functions supported are:
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+ - login/register
+ - follow/unfollow
+ - tweeting
+ - view feed
+ - query tweets
+ - simulate 200 users
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+Video Demo: Attached to submission

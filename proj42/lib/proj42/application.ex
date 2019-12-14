@@ -19,6 +19,13 @@ defmodule Proj42.Application do
     Proj42.Impl.Registry.start_link([])
     Proj42.Impl.Supervisor.start_link([])
     Agent.start_link(fn -> nil end, name: :active_user)
+    Proj42.Impl.Api.register("a", "a")
+    Proj42.Impl.Api.register("b", "b")
+    Proj42.Impl.Api.register("c", "c")
+    Proj42.Impl.Api.follow("b", "a")
+    Proj42.Impl.Api.follow("b", "c")
+    Proj42.Impl.Api.follow("c", "a")
+    Proj42.Impl.Api.follow("c", "b")
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
